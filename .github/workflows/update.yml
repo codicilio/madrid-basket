@@ -1,0 +1,37 @@
+name: Actualizar datos de baloncesto
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  publish:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el proyecto
+        uses: actions/checkout@v4
+      - name: Crear carpeta publicada
+        run: |
+          mkdir -p _site
+          cp site/index.html _site/index.html
+          python scripts/update_data.py
+          cp site/data.json _site/data.json
+          cp -R site/assets _site/assets
+      - name: Preparar GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Subir página
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Publicar página
+        id: deployment
+        uses: actions/deploy-pages@v4
