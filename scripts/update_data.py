@@ -1,5 +1,6 @@
 import html
 import json
+import os
 import re
 import time
 from datetime import datetime, timezone
@@ -161,6 +162,37 @@ def parse_standings(page):
         raise RuntimeError(f"Only {len(result)} standings entries parsed")
     return result
 
+
+PUBLISHED_FIELDS = ("competition", "round", "date", "time", "home", "away", "venue",
+                    "status", "played", "live", "periodLabel", "score", "boxscoreUrl")
+
+def semantic_signature(payload):
+    games = [{key: game.get(key) for key in PUBLISHED_FIELDS} for game in payload.get("games", [])]
+    games.sort(key=lambda game: (game.get("date") or "", game.get("competition") or "", game.get("round") or 0))
+    return json.dumps({"games": games, "standings": payload.get("standings", {})},
+                      ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+def should_publish(payload):
+    published_url = os.environ.get("PUBLISHED_DATA_URL", "").strip()
+    if not published_url:
+        print("No hay URL publicada configurada; se publicará para evitar dejar datos sin actualizar.")
+        changed = True
+    else:
+        url = published_url + ("&" if "?" in published_url else "?") + f"check={int(time.time())}"
+        request = Request(url, headers={"User-Agent": HEADERS["User-Agent"], "Cache-Control": "no-cache"})
+        try:
+            with urlopen(request, timeout=15) as response:
+                previous = json.loads(response.read().decode("utf-8", "replace"))
+            changed = semantic_signature(payload) != semantic_signature(previous)
+        except Exception as error:
+            print(f"No se pudo comparar con la versión publicada ({error}); se publicará para proteger la actualización.")
+            changed = True
+    output_path = os.environ.get("GITHUB_OUTPUT")
+    if output_path:
+        with open(output_path, "a", encoding="utf-8") as output:
+            output.write(f"publish={'true' if changed else 'false'}\n")
+    print("Se publicará: hay cambios en los datos deportivos." if changed else "Sin cambios deportivos; se omite la publicación.")
+
 def main():
     all_games, tables = [], {}
     times = {"acb": schedule_times(ACB_SCHEDULE, "acb"), "euro": schedule_times(EURO_SCHEDULE, "euro")}
@@ -185,6 +217,7 @@ def main():
     }
     with open("site/data.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+    should_publish(payload)
     print(f"Wrote {len(all_games)} games; ACB standings {len(tables['acb'])}, EuroLeague standings {len(tables['euro'])}")
 
 if __name__ == "__main__":
