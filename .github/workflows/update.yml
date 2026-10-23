@@ -1,7 +1,8 @@
 name: Actualizar datos de baloncesto
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    # GitHub may delay schedules at the top of the hour; start at minute 3 instead.
+    - cron: "3/5 * * * *"
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,19 +20,25 @@ jobs:
     steps:
       - name: Descargar el proyecto
         uses: actions/checkout@v4
-      - name: Crear carpeta publicada
+      - name: Consultar fuente y detectar cambios
+        id: compare
+        env:
+          PUBLISHED_DATA_URL: https://codicilio.github.io/madrid-basket/data.json
         run: |
           mkdir -p _site
-          cp site/index.html _site/index.html
           python scripts/update_data.py
+          cp site/index.html _site/index.html
           cp site/data.json _site/data.json
           cp -R site/assets _site/assets
       - name: Preparar GitHub Pages
+        if: ${{ steps.compare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
         uses: actions/configure-pages@v5
       - name: Subir página
+        if: ${{ steps.compare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - name: Publicar página
+        if: ${{ steps.compare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
         id: deployment
         uses: actions/deploy-pages@v4
