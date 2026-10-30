@@ -4,6 +4,7 @@ import os
 import re
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from urllib.request import Request, urlopen
 
 BASE = "https://dbasket.net"
@@ -20,6 +21,63 @@ def get(url):
         if response.status != 200:
             raise RuntimeError(f"DBasket returned HTTP {response.status}: {url}")
         return response.read().decode("utf-8", "replace")
+
+def get_json(url):
+    return json.loads(get(url))
+
+def attach_live_ids(games):
+    """Attach competition live-feed identifiers without making calendar publishing fragile."""
+    try:
+        euro = get_json("https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games")
+        entries = euro if isinstance(euro, list) else euro.get("data", euro.get("games", []))
+        for game in games:
+            if game["competition"] != "euro":
+                continue
+            for item in entries:
+                day = str(item.get("localDate", item.get("date", "")))[:10]
+                if day != game["date"]:
+                    continue
+                home = (item.get("local") or {}).get("club", {}).get("name", "")
+                away = (item.get("road") or {}).get("club", {}).get("name", "")
+                if "REAL MADRID" in home.upper() or "REAL MADRID" in away.upper():
+                    game["liveGameCode"] = item.get("gameCode")
+                    game["liveStatsUrl"] = "https://mediagamecenter.euroleague.net/"
+                    break
+    except Exception as error:
+        print(f"Aviso: no se pudieron añadir identificadores live de Euroliga: {error}")
+    try:
+        calendar = get_json("https://api2.acb.com/api/seasondata/Calendar/season-calendar?season=2027&competitionId=1")
+        teams = {int(team["id"]): team for team in calendar.get("teams", [])}
+        real = next((team for team in teams.values() if int(team.get("clubId", 0)) == 9), None)
+        if real:
+            madrid_id = int(real["id"])
+            matches = [match for rnd in calendar.get("rounds", []) for match in rnd.get("matches", [])]
+            for game in games:
+                if game["competition"] != "acb":
+                    continue
+                for item in matches:
+                    if madrid_id not in (int(item.get("homeTeamId", -1)), int(item.get("awayTeamId", -1))):
+                        continue
+                    start = item.get("startDateTime") or ""
+                    try:
+                        local_day = datetime.fromisoformat(start.replace("Z", "+00:00")).astimezone(ZoneInfo("Europe/Madrid")).date().isoformat()
+                    except ValueError:
+                        continue
+                    if local_day == game["date"] and int(item.get("roundNumber", game["round"])) == game["round"]:
+                        game["liveMatchId"] = item.get("id")
+                        game["liveStatsUrl"] = f"https://live.acb.com/es/partidos/{slug(game['home'])}-vs-{slug(game['away'])}-{item.get('id')}/estadisticas"
+                        break
+    except Exception as error:
+        print(f"Aviso: no se pudieron añadir identificadores live de ACB: {error}")
+
+def normalize_name(value):
+    import unicodedata
+    return "".join(ch for ch in unicodedata.normalize("NFD", str(value)).upper() if unicodedata.category(ch) != "Mn")
+
+def slug(value):
+    import unicodedata
+    value = "".join(ch for ch in unicodedata.normalize("NFD", value.lower()) if unicodedata.category(ch) != "Mn")
+    return re.sub(r"[^a-z0-9]+", "-", value).strip("-")
 
 def text_only(s):
     s = re.sub(r"<br\s*/?>", " ", s, flags=re.I)
@@ -164,7 +222,8 @@ def parse_standings(page):
 
 
 PUBLISHED_FIELDS = ("competition", "round", "date", "time", "home", "away", "venue",
-                    "status", "played", "live", "periodLabel", "score", "boxscoreUrl")
+                    "status", "played", "live", "periodLabel", "score", "boxscoreUrl",
+                    "liveGameCode", "liveMatchId", "liveStatsUrl")
 
 def semantic_signature(payload):
     games = [{key: game.get(key) for key in PUBLISHED_FIELDS} for game in payload.get("games", [])]
@@ -207,6 +266,7 @@ def main():
         all_games.extend(games)
         time.sleep(2)
     all_games.sort(key=lambda g: (g["date"], g["competition"], g["round"]))
+    attach_live_ids(all_games)
     payload = {
         "season": SEASON,
         "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
