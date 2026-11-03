@@ -4,6 +4,9 @@ on:
     # GitHub may delay schedules at the top of the hour; start at minute 3 instead.
     - cron: "3/5 * * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['site/**', 'scripts/**', '.github/workflows/**']
 permissions:
   contents: read
   pages: write
@@ -17,6 +20,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Descargar el proyecto
         uses: actions/checkout@v4
@@ -24,21 +28,20 @@ jobs:
         id: compare
         env:
           PUBLISHED_DATA_URL: https://codicilio.github.io/madrid-basket/data.json
+          FORCE_PUBLISH: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
         run: |
           mkdir -p _site
           python scripts/update_data.py
-          cp site/index.html _site/index.html
-          cp site/data.json _site/data.json
-          cp -R site/assets _site/assets
+          cp -R site/. _site/
       - name: Preparar GitHub Pages
-        if: ${{ steps.compare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
+        if: ${{ steps.compare.outputs.publish == 'true' }}
         uses: actions/configure-pages@v5
       - name: Subir página
-        if: ${{ steps.compare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
+        if: ${{ steps.compare.outputs.publish == 'true' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - name: Publicar página
-        if: ${{ steps.compare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch' }}
+        if: ${{ steps.compare.outputs.publish == 'true' }}
         id: deployment
         uses: actions/deploy-pages@v4

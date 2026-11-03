@@ -1,26 +1,36 @@
-# Madrid Basket — actualización automática
+# Madrid Basket
 
-Dashboard pública para seguir la temporada 2026/27 del Real Madrid en Liga Endesa y Euroliga. La web se publica en GitHub Pages; un flujo automático vuelve a consultar los datos y republica el sitio aproximadamente cada cinco minutos. Dentro de la ventana prevista de un partido, la página consulta el archivo publicado cada minuto y muestra un botón para pedir la última versión disponible.
+Dashboard de aficionados del Real Madrid de baloncesto (Liga Endesa y Euroliga), publicada gratis en GitHub Pages:
 
-## Publicarla gratis en GitHub Pages
+**https://codicilio.github.io/madrid-basket/**
 
-1. Descarga `madrid-basket-github.zip` y extráelo en tu ordenador. Los archivos de dentro del ZIP son la raíz del repositorio: deben quedar visibles `site`, `scripts`, `.github` y `README.md`.
-2. En GitHub, crea un repositorio nuevo con un nombre sencillo, por ejemplo `madrid-basket`. Selecciona **Public**. Para GitHub Free, Pages requiere un repositorio público.
-3. Instala y abre GitHub Desktop, inicia sesión y clona el repositorio vacío que acabas de crear.
-4. Copia el contenido extraído del ZIP dentro de la carpeta local del repositorio. Copia también `.github`; contiene el flujo de publicación automática.
-5. En GitHub Desktop, escribe un resumen como `Publicar dashboard Madrid Basket`, pulsa **Commit to main** y después **Push origin**.
-6. En GitHub, abre el repositorio y entra en **Settings → Pages**. En **Build and deployment → Source**, selecciona **GitHub Actions**.
-7. Abre la pestaña **Actions**, elige **Actualizar datos de baloncesto** y pulsa **Run workflow → Run workflow** para la primera publicación.
-8. Espera a que la ejecución termine en verde. Después abre **Settings → Pages** y pulsa **Visit site**. La dirección tendrá este formato: `https://TU-USUARIO.github.io/NOMBRE-DEL-REPOSITORIO/`.
-9. Envía esa dirección de Pages al grupo de WhatsApp. Comparte la dirección del sitio, no la del repositorio ni la del archivo local `index.html`.
+## Qué incluye
 
-La primera publicación puede tardar unos minutos. Si la pestaña **Actions** muestra un aviso para habilitar flujos de trabajo, habilítalos y vuelve a ejecutar el flujo.
+- **Directo**: marcador, cuarto y reloj del partido en curso, actualizados cada 15 segundos desde las fuentes oficiales de Euroliga y ACB.
+- **Estadísticas en vivo (Euroliga)**: tabla de jugadores del Madrid y del rival (puntos, rebotes, asistencias, tiros, valoración, quién está en pista) y parciales por cuarto. En ACB, enlace directo a las estadísticas oficiales del partido.
+- **Próximo partido**: cuenta atrás, hora de Madrid, canales de TV (ACB) y botón para añadirlo al calendario del móvil.
+- **Resumen de temporada**: balance, racha, últimos cinco partidos, puntos a favor y en contra y posición en cada competición.
+- **Calendario y resultados** con filtros por competición, casa/fuera y rival. Al pulsar un partido de Euroliga ya jugado se abre su ficha completa con estadísticas.
+- **Clasificaciones** de Liga Endesa y Euroliga con las zonas de playoff y play-in.
+- **Compartir por WhatsApp** con el próximo partido ya escrito en el mensaje.
 
-## Qué hace y qué límites tiene
+## Cómo se actualiza
 
-- El flujo obtiene el calendario, los resultados y las clasificaciones desde DBasket, y los horarios publicados desde las páginas de ACB y Real Madrid. Rechaza los datos incompletos para conservar la última versión válida.
-- La tarea programada está configurada cada cinco minutos. GitHub puede retrasar una tarea programada cuando hay carga; no es una garantía de actualización exacta.
-- La página solicita el último `data.json` al abrirse. Durante la ventana de un partido, vuelve a consultarlo cada minuto y muestra **Refrescar marcador**. Esto pide el último archivo publicado; no inicia un nuevo proceso en GitHub.
-- En directo se muestra el marcador y el periodo cuando la fuente los publica. El botón de estadísticas abre la página en directo de ACB o Euroliga.
-- Los escudos locales se guardan en `site/assets/logos/` y el flujo los copia al sitio publicado.
-- Conserva la autorización escrita de DBasket junto al proyecto.
+- `.github/workflows/update.yml` se ejecuta cada 5 minutos (GitHub puede retrasarlo algunos minutos) y cada vez que se cambia el código.
+- `scripts/update_data.py` descarga resultados y clasificaciones de DBasket (uso autorizado por escrito) y completa horarios exactos, televisión y marcador desde las APIs públicas de ACB y Euroliga. Si una fuente oficial falla, se mantienen los datos de DBasket. Si DBasket falla, no se publica nada y la web sigue mostrando la última versión válida.
+- Solo se vuelve a publicar la web cuando cambia algún dato deportivo.
+- Durante el partido, la propia página consulta directamente el marcador oficial, sin esperar a GitHub.
+
+## Estructura
+
+```
+site/index.html        la web (un solo archivo, sin dependencias)
+site/data.json         datos (los regenera el flujo automático)
+site/assets/logos/     escudos
+scripts/update_data.py recogida de datos
+.github/workflows/     publicación automática
+```
+
+## Si algo falla
+
+Pestaña **Actions → Actualizar datos de baloncesto → Run workflow** fuerza una actualización y publicación. Si sale en rojo, abre la ejecución para ver el error.

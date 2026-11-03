@@ -1,17 +1,572 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101722"><title>Madrid Basket</title><style>
-:root{color-scheme:dark;--bg:#0b111a;--panel:#131d29;--line:#273445;--muted:#91a1b5;--white:#f4f7fb;--gold:#e9bd64;--blue:#75a9ff;--green:#60d6a2}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% -20%,#20344c 0,transparent 45%),var(--bg);color:var(--white);font:15px/1.5 system-ui,Segoe UI,sans-serif}header,.wrap{max-width:1120px;margin:auto;padding:20px}header{display:flex;justify-content:space-between;border-bottom:1px solid #ffffff12}.brand{font-weight:850;letter-spacing:.04em}.brand b{color:var(--gold)}.muted{color:var(--muted);font-size:12px}.wrap{padding-top:32px}.hero{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:22px}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}h1{font-size:clamp(28px,5vw,44px);line-height:1.05;margin:8px 0}.next{font-size:19px;font-weight:750}.count{color:var(--gold);font-weight:750;font-variant-numeric:tabular-nums}.links{display:flex;gap:8px}.links a,.tabs button,.refresh{border:1px solid var(--line);background:#182433;color:var(--white);padding:9px 12px;border-radius:10px;text-decoration:none;cursor:pointer}.links a:hover,.tabs button.active{border-color:var(--gold);color:var(--gold)}.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.card{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:16px}.card h2{margin:0 0 10px;font-size:17px}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:6px 5px;text-align:left;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-weight:600}.tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:20px 0 12px}.filter-label{color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;margin-left:8px;padding-left:13px;border-left:1px solid var(--line)}.tabs button.active{background:var(--gold);color:#151a20;font-weight:750}.game{display:grid;grid-template-columns:105px 1fr auto;align-items:center;gap:14px;border:1px solid var(--line);background:var(--panel);border-radius:13px;margin:9px 0;padding:13px 16px}.date{font-weight:750}.date small{display:block;color:var(--muted);font-weight:500}.comp{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.teams{display:flex;gap:10px;align-items:center;margin-top:4px;font-weight:700}.teams a{color:var(--white);text-decoration:none}.teams a:hover{color:var(--gold)}.dash{color:#64758b}.badge{border:1px solid #405168;border-radius:20px;padding:4px 9px;color:#c0ccda;font-size:11px;white-space:nowrap}.badge.home{color:var(--green);border-color:#2a6751}.score{color:var(--muted);text-align:right;margin-top:6px}.source{margin:25px 2px;color:var(--muted);font-size:12px}.source a{color:var(--blue)}.status{font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center}.dot{width:7px;height:7px;background:var(--green);border-radius:50%}.error{color:#ffadad}.empty{padding:30px;text-align:center;color:var(--muted)}@media(max-width:650px){header,.wrap{padding:15px}.hero{display:block}.cards{grid-template-columns:1fr}.game{grid-template-columns:1fr auto;gap:8px}.game .right{grid-column:2;grid-row:1/3;text-align:right}.links{margin-top:14px}}
-.cards[hidden]{display:none}.opponent-search{margin:16px 0 18px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:13px}.opponent-search label{display:block;font-weight:750;margin-bottom:8px}.search-row{display:flex;gap:8px}.search-row input{flex:1;min-width:0;background:#0d1520;border:1px solid var(--line);border-radius:10px;color:var(--white);padding:10px 12px;font:inherit}.opponent-search p{margin:7px 0 0}.team-cell{display:inline-flex;align-items:center;gap:8px}.team-logo{width:27px;height:27px;object-fit:contain;flex:none}.teams .team-logo{width:30px;height:30px}.table .team-logo{width:24px;height:24px}.standings-section{margin-top:18px}.standings-section .cards{margin-top:12px}#games{height:min(56vh,620px);min-height:330px;overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#405168 #131d29;padding:2px 7px 2px 2px}.hero{align-items:center}.hero h1{font-size:clamp(40px,7vw,62px);letter-spacing:-.04em;margin:8px 0 12px}.next{font-size:clamp(22px,3vw,30px);display:flex;align-items:center;gap:8px;flex-wrap:wrap}.count{font-size:17px;margin-top:8px}.game{grid-template-columns:92px minmax(0,1fr) auto;gap:8px;padding:14px 16px}.date{font-size:16px}.date small{font-size:14px}.teams{font-size:17px;gap:7px;flex-wrap:wrap}.score{font-size:16px;margin-top:4px}.right{text-align:right}.club{display:inline-flex;align-items:center;gap:7px}.next .club{font-size:clamp(21px,3vw,28px)}@media(max-width:650px){.search-row{flex-wrap:wrap}.search-row input{flex-basis:100%}.team-logo{width:23px;height:23px}#games{height:56vh;min-height:290px}.game{grid-template-columns:1fr auto;gap:8px}.teams{font-size:16px}.date,.date small{font-size:14px}.score{font-size:15px}.hero h1{font-size:42px}}
-.next-panel{display:flex;align-items:center;justify-content:space-between;gap:28px;min-height:166px;padding:28px 30px;border:1px solid #6b562a;border-radius:24px;background:linear-gradient(110deg,#12243c,#101d30 72%,#112137);margin-bottom:8px}.next-copy{min-width:0}.next-pill{display:inline-flex;padding:4px 12px;border-radius:20px;background:#e9bd6428;border:1px solid #8d702b;color:#ffd245;font-size:12px;font-weight:850;margin-bottom:12px}.next-panel .next{font-size:clamp(24px,3.5vw,36px);line-height:1.2;font-weight:900;display:flex;align-items:center;gap:9px;flex-wrap:wrap}.next-panel .team-cell{display:inline-flex;align-items:center;gap:8px}.next-panel .team-logo{width:34px;height:34px;object-fit:contain}.next-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;color:#c5d0dd;font-size:15px}.count{flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-width:365px;min-height:84px;padding:12px 18px;border:1px solid #26364b;border-radius:18px;background:#09111d;font-variant-numeric:tabular-nums}.count-part{min-width:55px;text-align:center;display:flex;flex-direction:column;align-items:center}.count-part b{font-size:30px;line-height:1;color:#f6f8fc;font-weight:900}.count-part:first-child b,.count-part:last-child b{color:#f4c51f}.count-part small{margin-top:5px;font-size:9px;color:#99a8bb;font-weight:800}.count-sep{color:#66778e;font-size:24px;font-weight:800;margin:0 7px 12px}.count-message{font-size:14px;color:#d8e0eb;text-align:center}.hero-actions{display:flex;align-items:center;justify-content:space-between;margin:0 2px 20px}.filter-toolbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:20px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:15px;background:#101a28}.filter-group{display:flex;align-items:center;gap:10px}.filter-title{white-space:nowrap;color:#9eafc4;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.filter-buttons{display:flex;gap:6px}.filter-toolbar button{border:0;border-radius:20px;padding:8px 14px;background:#202d40;color:#edf3fb;cursor:pointer;white-space:nowrap}.filter-toolbar button.active{background:#efb900;color:#171b20;font-weight:800}.filter-group [data-filter="euro"].active,.filter-group [data-venue].active{background:#2964ea;color:white}.h2h-search{display:flex;align-items:center;flex:1 1 250px;min-width:210px;max-width:370px;margin-left:auto;border:1px solid #35465d;border-radius:22px;background:#0e1725;padding:0 8px 0 13px}.h2h-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--white);padding:9px 0;font:inherit;font-size:13px}.h2h-search input::placeholder{color:#a3b1c2}.h2h-search button{padding:0 5px;background:transparent;color:#a8b7c9;font-size:22px}.filter-help{margin:6px 4px 10px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:850px){.h2h-search{max-width:none;flex-basis:100%;margin-left:0}}@media(max-width:680px){.next-panel{align-items:stretch;flex-direction:column;gap:18px;padding:22px 18px}.count{min-width:0;width:100%;min-height:76px}.count-part{flex:1;min-width:0}.count-part b{font-size:26px}.count-sep{margin-left:3px;margin-right:3px}.hero-actions{gap:10px;align-items:flex-start}.next-meta{font-size:13px}.filter-group{width:100%;justify-content:space-between}.filter-buttons{flex-wrap:wrap;justify-content:flex-end}.h2h-search{flex-basis:100%}}.live-score{margin-top:9px;color:#ffcf29;font-size:26px;font-weight:900;font-variant-numeric:tabular-nums}.live-period{display:inline-flex;margin-top:7px;padding:4px 10px;border:1px solid #3b526c;border-radius:16px;background:#1b2a3d;color:#dce8f8;font-size:13px;font-weight:800}.live-period[hidden]{display:none}.live-state{color:#ffcf29;font-size:15px;font-weight:900;letter-spacing:.08em}.live-badge{background:#a7242b!important;color:#fff!important}.live-stats-link{color:var(--white);text-decoration:none;display:inline-flex;align-items:center}.live-stats-link[hidden]{display:none}@keyframes livepulse{50%{opacity:.45}}.next-pill:has(+.next){}.live-refresh-button[hidden]{display:none}.live-refresh-button{border-color:#b18a21;background:#332b15;color:#ffd54a;font-weight:800}.live-refresh-button:disabled{opacity:.65;cursor:wait}.hero-actions{flex-wrap:wrap}.hero-actions .action-button{min-height:54px;padding:12px 16px;font-size:15px;font-weight:850;box-shadow:0 4px 12px #0004;transition:transform .12s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}.hero-actions .action-button:hover{transform:translateY(-2px);box-shadow:0 7px 17px #0006}.hero-actions .action-button:active{transform:scale(.96);filter:brightness(1.25)}.hero-actions .action-button:focus-visible{outline:3px solid #fff;outline-offset:3px}.hero-actions .action-button:disabled{opacity:.8;cursor:wait}.hero-actions .action-button.is-loading{background:#29415d;color:#fff;border-color:#72a9ef}.hero-actions .action-button.is-done{background:#164a38;color:#e8fff4;border-color:#39ca91}.hero-actions .live-refresh-button{background:#59470d;border:1px solid #ffd34e;color:#ffe47b}.hero-actions .live-stats-link{background:#174b70;border:1px solid #56b7f0;color:#e3f5ff}.action-feedback{flex:1 0 100%;min-height:1.4em;color:#c5d0dd;font-size:13px}.action-feedback:empty{display:none}.live-period:empty{display:none}</style></head><body><header><div class="brand">🏀 <b>MADRID</b> BASKET</div><div class="status"><i class="dot"></i><span id="updated">Cargando datos…</span></div></header><main class="wrap"><section class="next-panel"><div class="next-copy"><div id="nextKicker" class="next-pill">★ PRÓXIMO PARTIDO</div><div id="next" class="next">Cargando…</div><div id="liveScore" class="live-score" hidden></div><div id="livePeriod" class="live-period" hidden></div><div id="nextMeta" class="next-meta"></div></div><div id="count" class="count" aria-label="Cuenta atrás"></div></section><div class="hero-actions"><span class="muted">Horario local de Madrid · actualizado desde calendarios publicados.</span><button id="refreshLiveButton" class="refresh live-refresh-button action-button" type="button" hidden>Actualizar marcador</button><a id="liveStatsLink" class="refresh live-stats-link action-button" target="_blank" rel="noreferrer" hidden>Ver estadísticas ↗</a><button id="reloadDataButton" class="refresh action-button" type="button">Recargar datos</button><span id="actionFeedback" class="action-feedback" aria-live="polite"></span></div><nav class="filter-toolbar" aria-label="Filtros de partidos"><div class="filter-group"><span class="filter-title">Competición:</span><div class="filter-buttons"><button class="active" data-filter="all">Todos</button><button data-filter="acb">Liga Endesa</button><button data-filter="euro">Euroliga</button></div></div><div class="filter-group"><span class="filter-title">Sede:</span><div class="filter-buttons"><button class="active" data-venue="all">Todas</button><button data-venue="home">Local</button><button data-venue="away">Visitante</button></div></div><div class="h2h-search"><label class="sr-only" for="teamSearch">Enfrentamientos directos con el Real Madrid</label><input id="teamSearch" list="teamChoices" autocomplete="off" placeholder="Enfrentamientos directos con el Real Madrid…"><datalist id="teamChoices"></datalist><button id="clearOpponent" type="button" aria-label="Limpiar equipo">×</button></div></nav><p id="teamSearchHelp" class="filter-help muted">Elige un rival para ver sus partidos frente al Real Madrid; puedes combinarlo con competición y sede.</p><div id="games"></div><section class="standings-section"><button id="standingsToggle" class="refresh" aria-expanded="false">Ver clasificaciones</button><div id="standings" class="cards" hidden><article class="card"><h2>Liga Endesa · Clasificación</h2><div id="acbTable"></div></article><article class="card"><h2>Euroliga · Clasificación</h2><div id="euroTable"></div></article></div></section></main><script id="embedded-data" type="application/json">{"season":"2026-27","updatedAt":"2026-10-22T11:49:10+00:00","source":"DBasket","sourceUrl":"https://dbasket.net/terms-of-use","games":[{"competition":"euro","competitionLabel":"Euroliga","round":1,"date":"2026-09-24","time":"18:00","home":"Dubai Basketball","away":"Real Madrid","venue":"Fuera","status":"Derrota","played":true,"score":"78 - 77","boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/1/24092026DUBRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":1,"date":"2026-09-27","time":"19:00","home":"Real Madrid","away":"Unicaja Málaga","venue":"Casa","status":"Victoria","played":true,"score":"89 - 87","boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/1/27092026RMAMAL"},{"competition":"euro","competitionLabel":"Euroliga","round":2,"date":"2026-09-29","time":"19:00","home":"Anadolu Efes Istanbul","away":"Real Madrid","venue":"Fuera","status":"Derrota","played":true,"score":"94 - 84","boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/2/29092026EFERMA"},{"competition":"euro","competitionLabel":"Euroliga","round":3,"date":"2026-10-01","time":"19:00","home":"Hapoel IBI Tel Aviv","away":"Real Madrid","venue":"Fuera","status":"Derrota","played":true,"score":"102 - 98","boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/3/01102026HTARMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":2,"date":"2026-10-04","time":"12:30","home":"Monbus Obradoiro","away":"Real Madrid","venue":"Fuera","status":"Victoria","played":true,"score":"107 - 114","boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/2/04102026OBRRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":4,"date":"2026-10-08","time":"20:45","home":"Real Madrid","away":"Partizan Belgrade","venue":"Casa","status":"Victoria","played":true,"score":"86 - 76","boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/4/08102026RMAPAR"},{"competition":"acb","competitionLabel":"Liga Endesa","round":3,"date":"2026-10-11","time":"12:00","home":"Real Madrid","away":"Kids&Us Manresa","venue":"Casa","status":"Victoria","played":true,"score":"120 - 83","boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/3/11102026RMAMAN"},{"competition":"euro","competitionLabel":"Euroliga","round":5,"date":"2026-10-13","time":"20:30","home":"Armani Olimpia Milano","away":"Real Madrid","venue":"Fuera","status":"Victoria","played":true,"score":"89 - 98","boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/5/13102026MILRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":6,"date":"2026-10-15","time":"21:00","home":"Real Madrid","away":"LDLC ASVEL Villeurbanne","venue":"Casa","status":"Victoria","played":true,"score":"111 - 92","boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/6/15102026RMAASV"},{"competition":"acb","competitionLabel":"Liga Endesa","round":4,"date":"2026-10-18","time":"12:30","home":"Real Madrid","away":"Surne Bilbao","venue":"Casa","status":"Victoria","played":true,"score":"119 - 84","boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/4/18102026RMABIL"},{"competition":"euro","competitionLabel":"Euroliga","round":7,"date":"2026-10-22","time":"20:05","home":"Maccabi Rapyd Tel Aviv","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/7/22102026TELRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":5,"date":"2026-10-25","time":"19:00","home":"iLERNA Lleida","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/5/25102026FLLRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":8,"date":"2026-10-27","time":"21:00","home":"Kosner Baskonia","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/8/27102026BASRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":9,"date":"2026-10-29","time":"20:45","home":"Real Madrid","away":"Fenerbahçe Istanbul","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/9/29102026RMAFEN"},{"competition":"acb","competitionLabel":"Liga Endesa","round":6,"date":"2026-11-01","time":"12:30","home":"Real Madrid","away":"Recoletas Salud San Pablo Burgos","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/6/01112026RMABUR"},{"competition":"euro","competitionLabel":"Euroliga","round":10,"date":"2026-11-04","time":"20:45","home":"Real Madrid","away":"Panathinaikos AKTOR Athens","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/10/04112026RMAPAN"},{"competition":"acb","competitionLabel":"Liga Endesa","round":7,"date":"2026-11-08","time":"19:00","home":"Real Madrid","away":"UCAM Murcia","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/7/08112026RMAMUR"},{"competition":"euro","competitionLabel":"Euroliga","round":11,"date":"2026-11-12","time":"21:00","home":"Real Madrid","away":"Crvena Zvezda Belgrade","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/11/12112026RMACZB"},{"competition":"acb","competitionLabel":"Liga Endesa","round":8,"date":"2026-11-15","time":"19:00","home":"Kosner Baskonia","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/8/15112026BASRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":12,"date":"2026-11-18","time":"18:00","home":"Beşiktaş Istanbul","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/12/18112026BESRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":13,"date":"2026-11-20","time":"20:15","home":"Olympiacos Piraeus","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/13/20112026OLYRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":9,"date":"2026-11-22","time":"19:00","home":"Real Madrid","away":"Asisa Joventut","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/9/22112026RMAJOV"},{"competition":"euro","competitionLabel":"Euroliga","round":14,"date":"2026-11-25","time":"20:45","home":"Real Madrid","away":"Zalgiris Kaunas","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/14/25112026RMAZAL"},{"competition":"euro","competitionLabel":"Euroliga","round":15,"date":"2026-12-03","time":"20:45","home":"Real Madrid","away":"FC Barcelona","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/15/03122026RMABAR"},{"competition":"acb","competitionLabel":"Liga Endesa","round":10,"date":"2026-12-06","time":"12:30","home":"Real Madrid","away":"MoraBanc Andorra","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/10/06122026RMAAND"},{"competition":"acb","competitionLabel":"Liga Endesa","round":11,"date":"2026-12-08","time":"17:00","home":"Leyma Coruña","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/11/08122026CORRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":16,"date":"2026-12-10","time":"20:45","home":"Paris Basketball","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/16/10122026PRSRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":12,"date":"2026-12-12","time":"21:00","home":"Río Breogán","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/12/12122026BRERMA"},{"competition":"euro","competitionLabel":"Euroliga","round":17,"date":"2026-12-15","time":"20:45","home":"Real Madrid","away":"FC Bayern Munich","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/17/15122026RMABAY"},{"competition":"euro","competitionLabel":"Euroliga","round":18,"date":"2026-12-17","time":"20:45","home":"Real Madrid","away":"Valencia Basket","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/18/17122026RMAVAL"},{"competition":"acb","competitionLabel":"Liga Endesa","round":13,"date":"2026-12-20","time":"19:00","home":"Casademont Zaragoza","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/13/20122026ZARRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":19,"date":"2026-12-22","time":"20:30","home":"Virtus Bologna","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/19/22122026BOLRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":14,"date":"2026-12-27","time":"21:00","home":"FC Barcelona","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/14/27122026BARRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":20,"date":"2026-12-29","time":"21:00","home":"Real Madrid","away":"Dubai Basketball","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/20/29122026RMADUB"},{"competition":"acb","competitionLabel":"Liga Endesa","round":16,"date":"2027-01-02","time":"21:00","home":"Real Madrid","away":"La Laguna Tenerife","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/16/02012027RMACBC"},{"competition":"acb","competitionLabel":"Liga Endesa","round":15,"date":"2027-01-04","time":"20:00","home":"Valencia Basket","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/15/04012027VALRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":21,"date":"2027-01-08","time":"20:45","home":"Real Madrid","away":"Olympiacos Piraeus","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/21/08012027RMAOLY"},{"competition":"acb","competitionLabel":"Liga Endesa","round":17,"date":"2027-01-10","time":"12:00","home":"Real Madrid","away":"FIATC Girona","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/17/10012027RMABGI"},{"competition":"euro","competitionLabel":"Euroliga","round":22,"date":"2027-01-12","time":"20:00","home":"Crvena Zvezda Belgrade","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/22/12012027CZBRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":23,"date":"2027-01-14","time":"20:45","home":"Real Madrid","away":"Anadolu Efes Istanbul","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/23/14012027RMAEFE"},{"competition":"acb","competitionLabel":"Liga Endesa","round":18,"date":"2027-01-16","time":"19:30","home":"Recoletas Salud San Pablo Burgos","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/18/16012027BURRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":24,"date":"2027-01-21","time":"20:45","home":"Real Madrid","away":"Maccabi Rapyd Tel Aviv","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/24/21012027RMATEL"},{"competition":"acb","competitionLabel":"Liga Endesa","round":19,"date":"2027-01-24","time":"12:00","home":"Real Madrid","away":"Leyma Coruña","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/19/24012027RMACOR"},{"competition":"euro","competitionLabel":"Euroliga","round":25,"date":"2027-01-29","time":"18:45","home":"Fenerbahçe Istanbul","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/25/29012027FENRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":20,"date":"2027-01-31","time":"19:00","home":"UCAM Murcia","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/20/31012027MURRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":26,"date":"2027-02-02","time":"20:45","home":"Partizan Belgrade","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/26/02022027PARRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":27,"date":"2027-02-04","time":"20:45","home":"Real Madrid","away":"Paris Basketball","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/27/04022027RMAPRS"},{"competition":"acb","competitionLabel":"Liga Endesa","round":21,"date":"2027-02-07","time":"19:00","home":"Real Madrid","away":"Kosner Baskonia","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/21/07022027RMABAS"},{"competition":"euro","competitionLabel":"Euroliga","round":28,"date":"2027-02-12","time":"19:00","home":"Zalgiris Kaunas","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/28/12022027ZALRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":22,"date":"2027-02-14","time":"19:00","home":"Kids&Us Manresa","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/22/14022027MANRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":29,"date":"2027-03-05","time":"20:30","home":"FC Barcelona","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/29/05032027BARRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":23,"date":"2027-03-07","time":"18:00","home":"Real Madrid","away":"Monbus Obradoiro","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/23/07032027RMAOBR"},{"competition":"euro","competitionLabel":"Euroliga","round":30,"date":"2027-03-09","time":"20:45","home":"Real Madrid","away":"Hapoel IBI Tel Aviv","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/30/09032027RMAHTA"},{"competition":"euro","competitionLabel":"Euroliga","round":31,"date":"2027-03-11","time":"20:45","home":"Real Madrid","away":"Virtus Bologna","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/31/11032027RMABOL"},{"competition":"acb","competitionLabel":"Liga Endesa","round":24,"date":"2027-03-14","time":"19:00","home":"Real Madrid","away":"Valencia Basket","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/24/14032027RMAVAL"},{"competition":"euro","competitionLabel":"Euroliga","round":32,"date":"2027-03-18","time":"20:45","home":"Real Madrid","away":"Kosner Baskonia","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/32/18032027RMABAS"},{"competition":"acb","competitionLabel":"Liga Endesa","round":25,"date":"2027-03-21","time":"19:00","home":"FIATC Girona","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/25/21032027BGIRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":33,"date":"2027-03-24","time":"20:30","home":"FC Bayern Munich","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/33/24032027BAYRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":34,"date":"2027-03-26","time":"20:45","home":"Real Madrid","away":"Beşiktaş Istanbul","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/34/26032027RMABES"},{"competition":"acb","competitionLabel":"Liga Endesa","round":26,"date":"2027-03-28","time":"19:00","home":"Real Madrid","away":"FC Barcelona","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/26/28032027RMABAR"},{"competition":"euro","competitionLabel":"Euroliga","round":35,"date":"2027-04-01","time":"20:30","home":"Valencia Basket","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/35/01042027VALRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":27,"date":"2027-04-04","time":"17:00","home":"Asisa Joventut","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/27/04042027JOVRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":36,"date":"2027-04-06","time":"20:45","home":"Real Madrid","away":"Armani Olimpia Milano","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/36/06042027RMAMIL"},{"competition":"euro","competitionLabel":"Euroliga","round":37,"date":"2027-04-08","time":"20:00","home":"LDLC ASVEL Villeurbanne","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/37/08042027ASVRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":28,"date":"2027-04-11","time":"19:00","home":"La Laguna Tenerife","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/28/11042027CBCRMA"},{"competition":"euro","competitionLabel":"Euroliga","round":38,"date":"2027-04-15","time":"20:15","home":"Panathinaikos AKTOR Athens","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/euro/2026-27/38/15042027PANRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":29,"date":"2027-04-18","time":"12:30","home":"Real Madrid","away":"Río Breogán","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/29/18042027RMABRE"},{"competition":"acb","competitionLabel":"Liga Endesa","round":30,"date":"2027-04-25","time":"12:30","home":"Real Madrid","away":"iLERNA Lleida","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/30/25042027RMAFLL"},{"competition":"acb","competitionLabel":"Liga Endesa","round":31,"date":"2027-05-02","time":"19:00","home":"Surne Bilbao","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/31/02052027BILRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":32,"date":"2027-05-09","time":"19:00","home":"Unicaja Málaga","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/32/09052027MALRMA"},{"competition":"acb","competitionLabel":"Liga Endesa","round":33,"date":"2027-05-16","time":"12:30","home":"Real Madrid","away":"Casademont Zaragoza","venue":"Casa","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/33/16052027RMAZAR"},{"competition":"acb","competitionLabel":"Liga Endesa","round":34,"date":"2027-05-21","time":null,"home":"MoraBanc Andorra","away":"Real Madrid","venue":"Fuera","status":"-","played":false,"score":null,"boxscoreUrl":"https://dbasket.net/seasons/acb/2026-27/34/21052027ANDRMA"}],"standings":{"acb":[{"position":1,"team":"RMA","played":"4","wins":"4","losses":"0","pointsFor":"442","pointsAgainst":"361","difference":"81"},{"position":2,"team":"BAS","played":"4","wins":"3","losses":"1","pointsFor":"386","pointsAgainst":"330","difference":"56"},{"position":3,"team":"BRE","played":"4","wins":"3","losses":"1","pointsFor":"428","pointsAgainst":"399","difference":"29"},{"position":4,"team":"CBC","played":"4","wins":"3","losses":"1","pointsFor":"332","pointsAgainst":"310","difference":"22"},{"position":5,"team":"ZAR","played":"4","wins":"3","losses":"1","pointsFor":"364","pointsAgainst":"346","difference":"18"},{"position":6,"team":"OBR","played":"4","wins":"3","losses":"1","pointsFor":"367","pointsAgainst":"360","difference":"7"},{"position":7,"team":"VAL","played":"4","wins":"2","losses":"2","pointsFor":"399","pointsAgainst":"369","difference":"30"},{"position":8,"team":"JOV","played":"4","wins":"2","losses":"2","pointsFor":"386","pointsAgainst":"367","difference":"19"},{"position":9,"team":"MAL","played":"4","wins":"2","losses":"2","pointsFor":"338","pointsAgainst":"325","difference":"13"},{"position":10,"team":"BAR","played":"4","wins":"2","losses":"2","pointsFor":"391","pointsAgainst":"400","difference":"-9"},{"position":11,"team":"BIL","played":"4","wins":"2","losses":"2","pointsFor":"388","pointsAgainst":"402","difference":"-14"},{"position":12,"team":"BGI","played":"4","wins":"2","losses":"2","pointsFor":"364","pointsAgainst":"400","difference":"-36"},{"position":13,"team":"BUR","played":"4","wins":"1","losses":"3","pointsFor":"350","pointsAgainst":"354","difference":"-4"},{"position":14,"team":"FLL","played":"4","wins":"1","losses":"3","pointsFor":"373","pointsAgainst":"394","difference":"-21"},{"position":15,"team":"AND","played":"4","wins":"1","losses":"3","pointsFor":"352","pointsAgainst":"380","difference":"-28"},{"position":16,"team":"MUR","played":"4","wins":"1","losses":"3","pointsFor":"347","pointsAgainst":"384","difference":"-37"},{"position":17,"team":"COR","played":"4","wins":"1","losses":"3","pointsFor":"366","pointsAgainst":"422","difference":"-56"},{"position":18,"team":"MAN","played":"4","wins":"0","losses":"4","pointsFor":"342","pointsAgainst":"412","difference":"-70"}],"euro":[{"position":1,"team":"PAN","played":"6","wins":"5","losses":"1","pointsFor":"528","pointsAgainst":"438","difference":"90"},{"position":2,"team":"FEN","played":"6","wins":"5","losses":"1","pointsFor":"501","pointsAgainst":"447","difference":"54"},{"position":3,"team":"OLY","played":"6","wins":"5","losses":"1","pointsFor":"589","pointsAgainst":"539","difference":"50"},{"position":4,"team":"HTA","played":"7","wins":"5","losses":"2","pointsFor":"630","pointsAgainst":"601","difference":"29"},{"position":5,"team":"VAL","played":"6","wins":"4","losses":"2","pointsFor":"590","pointsAgainst":"549","difference":"41"},{"position":6,"team":"CZB","played":"6","wins":"4","losses":"2","pointsFor":"485","pointsAgainst":"457","difference":"28"},{"position":7,"team":"DUB","played":"6","wins":"4","losses":"2","pointsFor":"490","pointsAgainst":"493","difference":"-3"},{"position":8,"team":"BOL","played":"7","wins":"4","losses":"3","pointsFor":"606","pointsAgainst":"608","difference":"-2"},{"position":9,"team":"RMA","played":"6","wins":"3","losses":"3","pointsFor":"554","pointsAgainst":"531","difference":"23"},{"position":10,"team":"BAR","played":"6","wins":"3","losses":"3","pointsFor":"542","pointsAgainst":"538","difference":"4"},{"position":11,"team":"BES","played":"6","wins":"3","losses":"3","pointsFor":"554","pointsAgainst":"555","difference":"-1"},{"position":12,"team":"PAR","played":"6","wins":"3","losses":"3","pointsFor":"466","pointsAgainst":"471","difference":"-5"},{"position":13,"team":"EFE","played":"6","wins":"2","losses":"4","pointsFor":"492","pointsAgainst":"510","difference":"-18"},{"position":14,"team":"ZAL","played":"6","wins":"2","losses":"4","pointsFor":"490","pointsAgainst":"517","difference":"-27"},{"position":15,"team":"BAY","played":"6","wins":"2","losses":"4","pointsFor":"521","pointsAgainst":"552","difference":"-31"},{"position":16,"team":"TEL","played":"6","wins":"2","losses":"4","pointsFor":"509","pointsAgainst":"540","difference":"-31"},{"position":17,"team":"ASV","played":"6","wins":"2","losses":"4","pointsFor":"527","pointsAgainst":"572","difference":"-45"},{"position":18,"team":"PRS","played":"6","wins":"1","losses":"5","pointsFor":"504","pointsAgainst":"545","difference":"-41"},{"position":19,"team":"MIL","played":"6","wins":"1","losses":"5","pointsFor":"504","pointsAgainst":"559","difference":"-55"},{"position":20,"team":"BAS","played":"6","wins":"1","losses":"5","pointsFor":"504","pointsAgainst":"564","difference":"-60"}]}}</script><script>
-let data=null, renderedMatchKey='', filter='all', venue='all', selectedTeam='';const names={acb:'Liga Endesa',euro:'Euroliga'};function esc(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}const fullNames={RMA:'Real Madrid',BAS:'Kosner Baskonia',BRE:'Río Breogán',CBC:'La Laguna Tenerife',ZAR:'Casademont Zaragoza',OBR:'Monbus Obradoiro',VAL:'Valencia Basket',JOV:'Asisa Joventut',MAL:'Unicaja Málaga',BAR:'FC Barcelona',BIL:'Surne Bilbao',BGI:'FIATC Girona',BUR:'Recoletas Salud San Pablo Burgos',FLL:'iLERNA Lleida',AND:'MoraBanc Andorra',MUR:'UCAM Murcia',COR:'Leyma Coruña',MAN:'Kids&Us Manresa',PAN:'Panathinaikos AKTOR Athens',FEN:'Fenerbahçe Istanbul',OLY:'Olympiacos Piraeus',HTA:'Hapoel IBI Tel Aviv',CZB:'Crvena Zvezda Belgrade',DUB:'Dubai Basketball',BOL:'Virtus Bologna',BES:'Beşiktaş Istanbul',PAR:'Paris Basketball',EFE:'Anadolu Efes Istanbul',ZAL:'Zalgiris Kaunas',BAY:'FC Bayern Munich',TEL:'Maccabi Rapyd Tel Aviv',ASV:'LDLC ASVEL Villeurbanne',PRS:'Paris Basketball',MIL:'Armani Olimpia Milano'};const logoFiles={'Real Madrid':'euro-real-madrid.png','Asisa Joventut':'acb-asisa-joventut.png','FC Barcelona':'euro-fc-barcelona.png','Casademont Zaragoza':'acb-casademont-zaragoza.png','FIATC Girona':'acb-fiatc-girona.png','iLERNA Lleida':'acb-ilerna-lleida.png','Kids&Us Manresa':'acb-kids-us-manresa.png','Kosner Baskonia':'euro-kosner-baskonia.png','La Laguna Tenerife':'acb-la-laguna-tenerife.png','Leyma Coruña':'acb-leyma-coru-a.png','Monbus Obradoiro':'acb-monbus-obradoiro.png','MoraBanc Andorra':'acb-morabanc-andorra.png','Recoletas Salud San Pablo Burgos':'acb-recoletas-salud-san-pablo-burgos.png','Río Breogán':'acb-r-o-breog-n.png','Surne Bilbao':'acb-surne-bilbao.png','UCAM Murcia':'acb-ucam-murcia.png','Unicaja Málaga':'acb-unicaja-m-laga.png','Valencia Basket':'euro-valencia-basket.png','Anadolu Efes Istanbul':'euro-anadolu-efes-istanbul.png','Armani Olimpia Milano':'euro-armani-olimpia-milano.png','Beşiktaş Istanbul':'euro-besiktas-istanbul.png','Crvena Zvezda Belgrade':'euro-crvena-zvezda-belgrade.png','Dubai Basketball':'euro-dubai-basketball.png','Fenerbahçe Istanbul':'euro-fenerbahce-istanbul.png','Hapoel IBI Tel Aviv':'euro-hapoel-ibi-tel-aviv.png','LDLC ASVEL Villeurbanne':'euro-ldlc-asvel-villeurbanne.png','Maccabi Rapyd Tel Aviv':'euro-maccabi-rapyd-tel-aviv.png','Olympiacos Piraeus':'euro-olympiacos-piraeus.png','Panathinaikos AKTOR Athens':'euro-panathinaikos-aktor-athens.png','Paris Basketball':'euro-paris-basketball.png','Virtus Bologna':'euro-virtus-bologna.png','Zalgiris Kaunas':'euro-zalgiris-kaunas.png','FC Bayern Munich':'euro-fc-bayern-munich.png','Partizan Belgrade':'euro-partizan-belgrade.png'};function teamFullName(name){return fullNames[name]||name}function logoUrl(name){const file=logoFiles[teamFullName(name)];return file?'assets/logos/'+file:''}function teamLogo(name){const url=logoUrl(name);return url?`<img class="team-logo" src="${url}" alt="" loading="lazy" onerror="this.hidden=true">`:''}function teamLabel(name){return `<span class="team-cell">${teamLogo(name)}<span>${esc(teamFullName(name))}</span></span>`}function normalizeTeam(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim()}function shortDate(s){return new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short'}).format(new Date(s+'T12:00:00'))}function drawTable(el,rows){if(!rows?.length){el.innerHTML='<div class="muted">Clasificación no disponible</div>';return}el.innerHTML='<table class="table"><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>V</th><th>D</th><th>Dif.</th></tr></thead><tbody>'+rows.map(r=>`<tr><td>${r.position}</td><td>${teamLabel(r.team)}</td><td>${esc(r.played)}</td><td>${esc(r.wins)}</td><td>${esc(r.losses)}</td><td>${esc(r.difference)}</td></tr>`).join('')+'</tbody></table>'}function gameWindowActive(now=Date.now()){return Boolean(data?.games?.some(g=>{if(g.played||!g.date||!g.time)return false;const elapsed=now-madridTime(g.date,g.time);return elapsed>=0&&elapsed<4*60*60*1000}))}function liveNow(g,now=Date.now()){if(g.played||!g.date||!g.time)return false;const start=madridTime(g.date,g.time),elapsed=now-start;return elapsed>=0&&elapsed<4*60*60*1000}function drawGames(){if(!data)return;const now=Date.now(),chosen=selectedTeam,list=data.games.filter(g=>{const direct=!chosen||((g.home==='Real Madrid'&&normalizeTeam(g.away)===normalizeTeam(chosen))||(g.away==='Real Madrid'&&normalizeTeam(g.home)===normalizeTeam(chosen)));return direct&&(filter==='all'||g.competition===filter)&&(venue==='all'||(venue==='home'?g.venue==='Casa':g.venue==='Fuera'))}).sort((a,b)=>a.date.localeCompare(b.date));document.querySelector('#games').innerHTML=list.map(g=>{const live=liveNow(g,now),isPast=g.played;const teamHTML=isPast?`<a href="${esc(g.boxscoreUrl)}" target="_blank" rel="noreferrer">${teamLabel(g.home)}</a><span class="dash">—</span><a href="${esc(g.boxscoreUrl)}" target="_blank" rel="noreferrer">${teamLabel(g.away)}</a>`:`${teamLabel(g.home)}<span class="dash">—</span>${teamLabel(g.away)}`;return `<article class="game" data-game-key="${esc([g.date,g.competition,g.home,g.away].join('|'))}" data-played="${isPast}"><div class="date">${shortDate(g.date)}<small>${g.time?esc(g.time):'Hora pendiente'} · Jornada ${g.round}</small></div><div><div class="comp">${names[g.competition]}</div><div class="teams">${teamHTML}</div></div><div class="right"><span class="badge ${live?'live-badge':g.venue==='Casa'?'home':''}">${live?'● EN VIVO':g.venue==='Casa'?'🏠 En casa':'✈️ Visitante'}</span><div class="score">${live&&g.score?esc(g.score):isPast?esc(g.score):live?'Esperando marcador':'Pendiente'}</div></div></article>`}).join('')||`<div class="empty">${chosen?'No hay enfrentamientos directos con este equipo en los datos de la temporada.':'No hay partidos para este filtro.'}</div>`;const gamesBox=document.querySelector('#games'),upcoming=gamesBox.querySelector('.game[data-played="false"]');gamesBox.scrollTop=upcoming?upcoming.getBoundingClientRect().top-gamesBox.getBoundingClientRect().top+gamesBox.scrollTop:0;tick()}function gameStructure(items){return JSON.stringify(items.map(g=>({...g,score:'',periodLabel:''})))}function updateVisibleScores(){if(!data)return;const now=Date.now();document.querySelectorAll('#games .game').forEach(row=>{const g=data.games.find(item=>[item.date,item.competition,item.home,item.away].join('|')===row.dataset.gameKey);if(!g)return;const live=liveNow(g,now),badge=row.querySelector('.badge'),score=row.querySelector('.score');badge.className=`badge ${live?'live-badge':g.venue==='Casa'?'home':''}`;badge.textContent=live?'● EN VIVO':g.venue==='Casa'?'🏠 En casa':'✈️ Visitante';score.textContent=live&&g.score?g.score:g.played?(g.score||'') : live?'Esperando marcador':'Pendiente'})}function tick(){if(!data)return;const now=Date.now(),liveGame=data.games.find(g=>liveNow(g,now)),next=data.games.filter(g=>!g.played&&!liveNow(g,now)&&new Date(g.date+'T23:59:59').getTime()>now).sort((a,b)=>a.date.localeCompare(b.date))[0],match=liveGame||next;if(!match){document.querySelector('#next').textContent='Calendario por actualizar';document.querySelector('#count').textContent='';document.querySelector('#liveStatsLink').hidden=true;document.querySelector('#refreshLiveButton').hidden=true;return}const isLive=Boolean(liveGame),matchKey=[match.competition,match.date,match.home,match.away,isLive].join('|');if(matchKey!==renderedMatchKey){renderedMatchKey=matchKey;document.querySelector('#nextKicker').textContent=isLive?'● EN VIVO':match.venue==='Casa'?'★ PRÓXIMO PARTIDO EN CASA':'★ PRÓXIMO PARTIDO COMO VISITANTE';document.querySelector('#next').innerHTML=`${teamLabel(match.home)} <span class="dash">—</span> ${teamLabel(match.away)}`;const date=new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',year:'numeric'}).format(new Date(match.date+'T12:00:00'));document.querySelector('#nextMeta').innerHTML=`<span>▣ ${date}</span><span>•</span><span>◷ ${match.time?esc(match.time)+' h':'Hora pendiente'}</span><span>•</span><span>${esc(names[match.competition]||match.competition)}${match.round?' · J. '+esc(match.round):''}</span>`;}const liveScore=document.querySelector('#liveScore'),period=document.querySelector('#livePeriod');liveScore.hidden=!isLive;liveScore.textContent=isLive?(match.score||'Marcador aún no recibido'):'';period.hidden=!isLive||!match.periodLabel;period.textContent=isLive?(match.periodLabel||''):'';const manual=document.querySelector('#refreshLiveButton');manual.hidden=!gameWindowActive(now);const stats=document.querySelector('#liveStatsLink');stats.hidden=!isLive;stats.href=match.liveStatsUrl||(match.competition==='acb'?'https://live.acb.com/':'https://mediagamecenter.euroleague.net/');stats.textContent=match.competition==='acb'?'Reloj y estadísticas ACB ↗':'Estadísticas Euroliga en directo ↗';const count=document.querySelector('#count');if(isLive){count.innerHTML='<div class="live-state">PARTIDO EN JUEGO</div>';return}if(!match.time){count.innerHTML='<div class="count-message">Hora pendiente de publicación</div>';return}const ms=madridTime(match.date,match.time)-now;if(ms<=0){count.innerHTML='<div class="count-message">Comienza en breve</div>';return}const vals=[Math.floor(ms/86400000),Math.floor(ms%86400000/3600000),Math.floor(ms%3600000/60000),Math.floor(ms%60000/1000)],labels=['DÍAS','HORAS','MIN','SEG'];count.innerHTML=vals.map((v,i)=>`${i?'<span class="count-sep">:</span>':''}<div class="count-part"><b>${String(v).padStart(2,'0')}</b><small>${labels[i]}</small></div>`).join('')}function madridTime(day,clock){const [y,mo,d]=day.split('-').map(Number),[h,m]=clock.split(':').map(Number),localAsUtc=Date.UTC(y,mo-1,d,h,m);let guess=localAsUtc;for(let i=0;i<3;i++){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',timeZoneName:'longOffset'}).formatToParts(new Date(guess));const zone=parts.find(p=>p.type==='timeZoneName')?.value||'GMT+01:00';const z=zone.match(/GMT([+-])(\d{2}):(\d{2})/);const off=z?(z[1]==='-'?-1:1)*(Number(z[2])*60+Number(z[3])):60;guess=localAsUtc-off*60000}return new Date(guess)}async function loadData(force=false){const el=document.querySelector('#updated');try{const r=await fetch(`data.json?ts=${Date.now()}`,{cache:force?'no-store':'default'});if(!r.ok)throw Error('HTTP '+r.status);const previous=data;data=await r.json();if(previous){for(const fresh of data.games){const old=previous.games.find(g=>[g.date,g.competition,g.home,g.away].join('|')===[fresh.date,fresh.competition,fresh.home,fresh.away].join('|'));if(old?.liveGameCode&&!fresh.liveGameCode)fresh.liveGameCode=old.liveGameCode;if(old?.liveMatchId&&!fresh.liveMatchId)fresh.liveMatchId=old.liveMatchId;if(old?.liveStatsUrl&&!fresh.liveStatsUrl)fresh.liveStatsUrl=old.liveStatsUrl;if(old?.live&&old.score&&!fresh.played){fresh.score=old.score;fresh.periodLabel=old.periodLabel;fresh.live=true}}}const firstLoad=!previous,standingsChanged=firstLoad||JSON.stringify(previous.standings)!==JSON.stringify(data.standings),gamesChanged=firstLoad||gameStructure(previous.games)!==gameStructure(data.games);document.querySelector('#updated').textContent='Datos: '+new Intl.DateTimeFormat('es-ES',{dateStyle:'short',timeStyle:'short'}).format(new Date(data.updatedAt));if(standingsChanged){drawTable(document.querySelector('#acbTable'),data.standings.acb);drawTable(document.querySelector('#euroTable'),data.standings.euro)}populateTeamChoices();if(gamesChanged)drawGames();else{updateVisibleScores();tick()}}catch(e){const local=document.querySelector('#embedded-data');if(local){data=JSON.parse(local.textContent);el.textContent='Datos integrados · '+new Intl.DateTimeFormat('es-ES',{dateStyle:'short',timeStyle:'short'}).format(new Date(data.updatedAt));drawTable(document.querySelector('#acbTable'),data.standings.acb);drawTable(document.querySelector('#euroTable'),data.standings.euro);populateTeamChoices();drawGames()}else{el.innerHTML=`<span class="error">No se pudo actualizar. Se reintentará automáticamente.</span>`;document.querySelector('#games').innerHTML='<div class="empty">No hay datos recientes. GitHub Actions volverá a intentarlo.</div>'}}}function populateTeamChoices(){const choices=[...new Set(data.games.flatMap(g=>[g.home,g.away]).filter(n=>n&&n!=='Real Madrid'))].sort((a,b)=>teamFullName(a).localeCompare(teamFullName(b),'es'));document.querySelector('#teamChoices').innerHTML=choices.map(n=>`<option value="${esc(teamFullName(n))}"></option>`).join('')}function setSearchTeam(){const value=document.querySelector('#teamSearch').value.trim(),choices=[...new Set(data.games.flatMap(g=>[g.home,g.away]).filter(n=>n&&n!=='Real Madrid'))],match=choices.find(n=>normalizeTeam(teamFullName(n))===normalizeTeam(value));selectedTeam=match||'';document.querySelector('#teamSearchHelp').textContent=match?`Enfrentamientos Real Madrid – ${teamFullName(match)} con los filtros seleccionados.`:(value?'Elige un equipo de la lista para ver sus encuentros directos.':'Elige un rival para ver todos los partidos de la temporada frente al Real Madrid.');drawGames()}document.querySelector('#teamSearch').addEventListener('input',setSearchTeam);document.querySelector('#clearOpponent').onclick=()=>{document.querySelector('#teamSearch').value='';selectedTeam='';document.querySelector('#teamSearchHelp').textContent='Elige un rival para ver todos los partidos de la temporada frente al Real Madrid.';drawGames()};document.querySelector('#standingsToggle').onclick=()=>{const box=document.querySelector('#standings'),open=box.hidden;box.hidden=!open;document.querySelector('#standingsToggle').textContent=open?'Ocultar clasificaciones':'Ver clasificaciones';document.querySelector('#standingsToggle').setAttribute('aria-expanded',String(open))};document.querySelectorAll('.filter-toolbar [data-filter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filter-toolbar [data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.filter;drawGames()});document.querySelectorAll('.filter-toolbar [data-venue]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filter-toolbar [data-venue]').forEach(x=>x.classList.remove('active'));b.classList.add('active');venue=b.dataset.venue;drawGames()});function runRefresh(button){const feedback=document.querySelector('#actionFeedback'),before=data?.updatedAt,label=button.textContent;button.disabled=true;button.classList.remove('is-done');button.classList.add('is-loading');button.textContent='Consultando…';feedback.textContent='Consultando los últimos datos publicados…';loadData(true).finally(()=>{button.disabled=false;button.classList.remove('is-loading');button.classList.add('is-done');button.textContent=label;const stamp=data?.updatedAt?new Intl.DateTimeFormat('es-ES',{dateStyle:'short',timeStyle:'short'}).format(new Date(data.updatedAt)):'sin datos';feedback.textContent=data?.updatedAt===before?'Consulta terminada; no hay datos nuevos. Última publicación: '+stamp:'Datos renovados. Última publicación: '+stamp;setTimeout(()=>button.classList.remove('is-done'),2200)})}document.querySelector('#refreshLiveButton').addEventListener('click',event=>refreshLiveNow(event.currentTarget));document.querySelector('#reloadDataButton').addEventListener('click',event=>runRefresh(event.currentTarget));loadData(true);setInterval(()=>{if(gameWindowActive())pollLiveFeeds()},20000);setInterval(()=>{if(gameWindowActive())loadData(true)},60*1000);setInterval(tick,1000);
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Madrid Basket · Directo, calendario y clasificación</title>
+<meta name="description" content="Real Madrid de baloncesto: marcador en directo, próximos partidos, resultados y clasificación de Liga Endesa y Euroliga.">
+<meta property="og:title" content="Madrid Basket · Real Madrid de baloncesto">
+<meta property="og:description" content="Marcador en directo, calendario, resultados y clasificaciones de Liga Endesa y Euroliga.">
+<meta property="og:image" content="https://codicilio.github.io/madrid-basket/assets/logos/euro-real-madrid.png">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="icon" href="assets/logos/euro-real-madrid.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1a;--bg2:#0f1726;--panel:#121c2d;--panel2:#16233a;--line:#22324b;--line2:#2c4060;
+  --text:#eef3fb;--muted:#8fa2bd;--dim:#62748f;
+  --gold:#e8b84f;--gold2:#f6d58a;--violet:#7c6cf0;--win:#3ccf8e;--loss:#ff6b6b;--live:#ff4757;
+  --r:16px;--font:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--num:"Barlow Condensed",Inter,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--font);min-height:100vh;
+  background-image:radial-gradient(900px 500px at 85% -10%,#1d2f52 0,transparent 60%),radial-gradient(700px 400px at -10% 10%,#221b45 0,transparent 55%)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+img{display:block}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-let livePollBusy=false,lastAcbPoll=0,acbCalendarCache=null,acbCalendarAt=0,euroGamesCache=null,euroGamesAt=0;
-async function refreshLiveNow(button){const label=button.textContent;button.disabled=true;button.classList.add('is-loading');button.textContent='Actualizando marcador…';try{await pollLiveFeeds(true)}finally{button.disabled=false;button.classList.remove('is-loading');button.textContent=label}}
-async function liveJson(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error(`HTTP ${r.status}`);return r.json()}
-async function pollLiveFeeds(force=false){if(!data||livePollBusy||(!force&&!gameWindowActive()))return;livePollBusy=true;try{const now=Date.now(),active=data.games.filter(g=>liveNow(g,now));for(const g of active){if(g.competition==='euro'){if(!g.liveGameCode&&Date.now()-euroGamesAt>60000){const raw=await liveJson(`https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games?_=${Date.now()}`);euroGamesCache=Array.isArray(raw)?raw:(raw.data||raw.games||[]);euroGamesAt=Date.now()}if(!g.liveGameCode){const list=euroGamesCache||[];const found=list.find(x=>String(x.localDate||x.date||'').slice(0,10)===g.date&&(((x.local||{}).club||{}).name||'').toUpperCase().includes('REAL MADRID')||String(x.localDate||x.date||'').slice(0,10)===g.date&&(((x.road||{}).club||{}).name||'').toUpperCase().includes('REAL MADRID'));if(found){g.liveGameCode=found.gameCode;g.liveStatsUrl='https://mediagamecenter.euroleague.net/'}}if(g.liveGameCode){const h=await liveJson(`https://live.euroleague.net/api/Header?gamecode=${encodeURIComponent(g.liveGameCode)}&seasoncode=E2026&_=${Date.now()}`);if(h&&(h.ScoreA!==undefined||h.ScoreB!==undefined)){g.score=`${h.ScoreA??0} - ${h.ScoreB??0}`;const q=String(h.Quarter||'').trim(),clock=String(h.RemainingPartialTime||'').trim();g.periodLabel=q?`${/^\d+$/.test(q)?q+'º cuarto':q}${clock?` · ${clock}`:''}`:(h.Live?'En juego':'');if(h.Live===false&&Number(h.ScoreA||0)+Number(h.ScoreB||0)>0){g.live=false;g.played=true;g.periodLabel='Final';}}}}
-else if(g.competition==='acb'&&(Date.now()-acbCalendarAt>25000||!acbCalendarCache)){acbCalendarCache=await liveJson(`https://api2.acb.com/api/seasondata/Calendar/season-calendar?season=2027&competitionId=1&_=${Date.now()}`);acbCalendarAt=Date.now();const teams=acbCalendarCache.teams||[],real=teams.find(t=>Number(t.clubId)===9||String(t.fullName||'').toLowerCase().includes('real madrid'));if(real){const gameRows=(acbCalendarCache.rounds||[]).flatMap(x=>x.matches||[]),m=gameRows.find(x=>[Number(x.homeTeamId),Number(x.awayTeamId)].includes(Number(real.id))&&Number(x.roundNumber||g.round)===Number(g.round));if(m){g.liveMatchId=m.id;const names=Object.fromEntries(teams.map(t=>[Number(t.id),t.fullName]));const slugify=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');g.liveStatsUrl=`https://live.acb.com/es/partidos/${slugify(names[Number(m.homeTeamId)])}-vs-${slugify(names[Number(m.awayTeamId)])}-${m.id}/estadisticas`}}}
-if(g.competition==='acb'&&g.liveMatchId&&acbCalendarCache){const m=(acbCalendarCache.rounds||[]).flatMap(x=>x.matches||[]).find(x=>String(x.id)===String(g.liveMatchId));if(m){g.score=`${m.homeScore??0} - ${m.awayScore??0}`;g.periodLabel=m.isOnHalfTime?'Descanso':m.currentQuarter?`${m.currentQuarter}º cuarto`:'';if(String(m.matchStatus||'').toLowerCase()==='finalized'){g.live=false;g.played=true;g.periodLabel='Final'}}}}
-if(active.length){updateVisibleScores();tick();if(active.some(g=>g.played))drawGames()}}
-catch(error){const feedback=document.querySelector('#actionFeedback');if(feedback)feedback.textContent='No se pudo obtener el marcador en directo; vuelve a intentarlo. '+error.message}
-finally{livePollBusy=false}}
-</script></body></html>
+/* Cabecera */
+.top{position:sticky;top:0;z-index:20;background:rgba(10,15,26,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #ffffff10}
+.top .wrap{display:flex;align-items:center;gap:12px;height:58px}
+.brand{display:flex;align-items:center;gap:10px;font:800 21px/1 var(--num);letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
+.brand img{width:30px;height:30px;object-fit:contain}
+.brand b{color:var(--gold)}
+.sync{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);white-space:nowrap}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--win);box-shadow:0 0 0 3px #3ccf8e22}
+.sync.stale i{background:var(--gold);box-shadow:0 0 0 3px #e8b84f22}
+.sync.err i{background:var(--loss)}
+.icon-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--panel);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold2)}
+.icon-btn svg{width:16px;height:16px}
+.wa{background:#1a3b2c;border-color:#2b6b4c}
+.wa:hover{color:#fff;border-color:#3ccf8e}
 
+/* Hero */
+.hero{margin:20px 0 14px;border:1px solid var(--line2);border-radius:22px;overflow:hidden;
+  background:linear-gradient(160deg,#18284a 0%,#121c2d 55%,#141a33 100%);position:relative}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(500px 220px at 50% 0,#e8b84f14,transparent 70%)}
+.hero-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px 0;flex-wrap:wrap;position:relative;z-index:1}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);background:#e8b84f14;border:1px solid #e8b84f40;border-radius:999px;padding:5px 11px}
+.kicker.live{color:#fff;background:var(--live);border-color:var(--live)}
+.kicker.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.comp-tag{font-size:12px;color:var(--muted);font-weight:600}
+.match{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:22px 20px 8px;position:relative;z-index:1}
+.side{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;min-width:0}
+.side img{width:76px;height:76px;object-fit:contain;filter:drop-shadow(0 6px 14px #0008)}
+.side .nm{font-weight:700;font-size:16px;line-height:1.2;overflow-wrap:anywhere}
+.side.rm .nm{color:var(--gold2)}
+.center{text-align:center;min-width:120px}
+.big-score{font:800 clamp(46px,11vw,78px)/1 var(--num);letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.big-score .sep{color:var(--dim);margin:0 6px}
+.period{margin-top:6px;font-weight:700;color:var(--live);font-size:14px}
+.vs{font:800 34px/1 var(--num);color:var(--dim)}
+.when{margin-top:8px;font:700 22px/1.1 var(--num);letter-spacing:.03em}
+.when small{display:block;font:500 13px/1.4 var(--font);color:var(--muted);letter-spacing:0}
+.when small::first-letter{text-transform:uppercase}
+.more{display:block;width:100%;margin:6px 0 0;padding:11px;border:1px dashed var(--line2);background:transparent;border-radius:12px;color:var(--muted);font-weight:600;cursor:pointer}
+.more:hover{color:var(--gold2);border-color:var(--gold)}
+.quarters{display:flex;justify-content:center;gap:4px;margin:10px auto 0;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.quarters span{background:#0007;border:1px solid var(--line);border-radius:7px;padding:2px 7px;font-variant-numeric:tabular-nums}
+.count{display:flex;justify-content:center;gap:8px;padding:6px 20px 4px;position:relative;z-index:1}
+.count div{min-width:62px;text-align:center;background:#0006;border:1px solid var(--line);border-radius:12px;padding:8px 6px}
+.count b{display:block;font:800 30px/1 var(--num);color:var(--gold2);font-variant-numeric:tabular-nums}
+.count small{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:600}
+.meta{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 16px;padding:12px 20px 0;font-size:13px;color:var(--muted);position:relative;z-index:1}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+.meta svg{width:15px;height:15px;opacity:.8}
+.tv{color:var(--text);font-weight:600}
+.actions{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;padding:16px 20px 20px;position:relative;z-index:1}
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line2);background:#ffffff0a;border-radius:11px;padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
+.btn:hover{border-color:var(--gold);color:var(--gold2)}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#1b1405}
+.btn.primary:hover{background:var(--gold2);color:#1b1405}
+.btn svg{width:16px;height:16px}
+.btn[disabled]{opacity:.6;cursor:wait}
+.note{font-size:12px;color:var(--dim);text-align:center;padding:0 20px 16px;margin-top:-8px;position:relative;z-index:1}
+
+/* Panel de estadísticas en directo */
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);margin:14px 0}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.panel-h h2{margin:0;font:700 19px/1.1 var(--num);letter-spacing:.05em;text-transform:uppercase}
+.panel-b{padding:12px 16px 16px}
+.seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:8px;padding:6px 11px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--panel2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line2)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+th:first-child,td:first-child{text-align:left}
+td.pl{text-align:left;font-weight:600}
+td.pl small{color:var(--dim);font-weight:500;margin-right:6px;display:inline-block;min-width:18px}
+tr.on-court td.pl::after{content:"●";color:var(--win);font-size:9px;margin-left:6px;vertical-align:2px}
+td.hot{color:var(--gold2);font-weight:700}
+tfoot td{font-weight:700;border-bottom:0;color:var(--muted)}
+.leaders{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.leader{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.leader small{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.leader b{display:block;font:800 26px/1 var(--num);color:var(--gold2);margin-top:4px}
+.leader span{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Resumen temporada */
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.sum{border:1px solid var(--line);background:var(--panel);border-radius:var(--r);padding:16px;min-width:0}
+.sum-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sum-h h3{margin:0;font:700 17px/1 var(--num);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pos{font:800 15px/1 var(--num);color:var(--gold2);letter-spacing:.04em}
+.record{display:flex;align-items:baseline;gap:10px;margin:10px 0 8px}
+.record b{font:800 44px/1 var(--num);font-variant-numeric:tabular-nums}
+.record span{color:var(--muted);font-size:13px}
+.form{display:flex;gap:5px;flex-wrap:wrap}
+.chip{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font:800 13px/1 var(--num);color:#08111e}
+.chip.w{background:var(--win)}.chip.l{background:var(--loss)}
+.sum-f{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.sum-f b{color:var(--text);font-variant-numeric:tabular-nums}
+
+/* Pestañas */
+.tabs{display:flex;gap:6px;margin:22px 0 12px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:10px 4px;margin-right:14px;font:700 18px/1 var(--num);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--text);border-color:var(--gold)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.filters select{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:7px 30px 7px 10px;font:600 13px var(--font);color:var(--text);appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238fa2bd' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;max-width:100%}
+
+/* Lista de partidos */
+.month{font:700 14px/1 var(--num);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:18px 2px 8px}
+.game{display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:11px 14px;margin-bottom:8px;text-decoration:none;cursor:default}
+.game.click{cursor:pointer}
+.game.click:hover{border-color:var(--line2);background:var(--panel2)}
+.game.next-up{border-color:#e8b84f66;box-shadow:inset 3px 0 0 var(--gold)}
+.game.is-live{border-color:var(--live);box-shadow:inset 3px 0 0 var(--live)}
+.d{text-align:center;line-height:1.05}
+.d b{display:block;font:800 26px/1 var(--num)}
+.d span{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.d small{display:block;font-size:11px;color:var(--dim);margin-top:3px}
+.g-mid{min-width:0}
+.g-comp{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.g-comp .euro{color:#ff8a3d}.g-comp .acb{color:#6fa8ff}
+.g-teams{display:flex;flex-direction:column;gap:3px;margin-top:5px}
+.tm{display:flex;align-items:center;gap:8px;min-width:0;font-weight:600}
+.tm img{width:22px;height:22px;object-fit:contain;flex:none}
+.tm span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm.rm span{color:var(--gold2)}
+.tm em{margin-left:auto;font:800 18px/1 var(--num);font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted);padding-left:8px}
+.tm em.won{color:var(--text)}
+.g-tv{font-size:11px;color:var(--dim);margin-top:5px}
+.g-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.res{font:800 14px/1 var(--num);letter-spacing:.06em;padding:5px 8px;border-radius:7px}
+.res.w{background:#3ccf8e22;color:var(--win)}.res.l{background:#ff6b6b22;color:var(--loss)}
+.res.live{background:var(--live);color:#fff}
+.res.pend{background:#ffffff0d;color:var(--muted);font-family:var(--font);font-weight:600;font-size:12px;letter-spacing:0}
+.venue{font-size:11px;color:var(--dim)}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line2);border-radius:14px}
+
+/* Clasificación */
+.st-team{display:flex;align-items:center;gap:8px;text-align:left}
+.st-team img{width:22px;height:22px;object-fit:contain}
+tr.rm td{background:#e8b84f14;color:var(--gold2);font-weight:700}
+td.zone{position:relative;padding-left:12px}
+td.zone::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:2px}
+td.z1::before{background:var(--win)}td.z2::before{background:var(--violet)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* Modal */
+dialog{border:1px solid var(--line2);background:var(--panel);color:var(--text);border-radius:18px;padding:0;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 40px)}
+dialog::backdrop{background:#000a;backdrop-filter:blur(3px)}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:1}
+.dlg-h h2{margin:0;font:700 19px/1.15 var(--num);letter-spacing:.04em;text-transform:uppercase}
+.x{border:0;background:#ffffff10;border-radius:9px;width:34px;height:34px;font-size:20px;cursor:pointer;flex:none}
+.loading{padding:30px;text-align:center;color:var(--muted)}
+
+footer{margin:34px 0 0;padding:22px 0 40px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
+footer a{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(80px);background:var(--panel2);border:1px solid var(--line2);padding:10px 16px;border-radius:12px;font-size:13px;transition:transform .25s;z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media (max-width:720px){
+  .summary{grid-template-columns:1fr}
+  .side img{width:56px;height:56px}
+  .side .nm{font-size:14px}
+  .match{padding:18px 12px 6px;gap:6px}
+  .center{min-width:96px}
+  .count div{min-width:54px}
+  .count b{font-size:26px}
+  .hero-head,.meta,.actions{padding-left:14px;padding-right:14px}
+  .sync span{display:none}
+  .wa .lbl{display:none}
+  .leaders{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .game{grid-template-columns:50px 1fr auto;padding:10px 12px;gap:10px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="assets/logos/euro-real-madrid.png" alt=""><span><b>Madrid</b> Basket</span></a>
+    <div id="sync" class="sync" title=""><i></i><span id="syncTxt">Cargando…</span></div>
+    <a id="share" class="icon-btn wa" href="#" target="_blank" rel="noopener" aria-label="Compartir por WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+      <span class="lbl">Compartir</span>
+    </a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="hero" class="hero" aria-live="polite"><div class="loading">Cargando partido…</div></section>
+
+  <section id="livePanel" class="panel" hidden>
+    <div class="panel-h">
+      <h2 id="liveTitle">Estadísticas en directo</h2>
+      <div class="seg" id="boxTeams"></div>
+    </div>
+    <div class="panel-b" id="liveBox"></div>
+  </section>
+
+  <section class="summary" id="summary"></section>
+
+  <nav class="tabs" role="tablist">
+    <button class="on" data-tab="games" role="tab">Partidos</button>
+    <button data-tab="table" role="tab">Clasificación</button>
+  </nav>
+
+  <section id="tab-games">
+    <div class="filters">
+      <div class="seg" id="fWhen">
+        <button data-v="next" class="on">Próximos</button><button data-v="done">Resultados</button><button data-v="all">Todos</button>
+      </div>
+      <div class="seg" id="fComp">
+        <button data-v="all" class="on">Todas</button><button data-v="acb">Liga Endesa</button><button data-v="euro">Euroliga</button>
+      </div>
+      <div class="seg" id="fVenue">
+        <button data-v="all" class="on">Todos</button><button data-v="Casa">Casa</button><button data-v="Fuera">Fuera</button>
+      </div>
+      <label class="sr" for="fRival">Rival</label>
+      <select id="fRival"><option value="">Todos los rivales</option></select>
+    </div>
+    <div id="games"></div>
+  </section>
+
+  <section id="tab-table" hidden>
+    <div class="filters">
+      <div class="seg" id="fTable"><button data-v="acb" class="on">Liga Endesa</button><button data-v="euro">Euroliga</button></div>
+    </div>
+    <div class="panel"><div class="panel-b"><div class="tbl-wrap" id="standings"></div><div class="legend" id="legend"></div></div></div>
+  </section>
+
+  <footer>
+    <p>Resultados y clasificaciones: <a href="https://dbasket.net" target="_blank" rel="noopener">DBasket</a> (uso autorizado). Horarios, televisión y directo: datos públicos de <a href="https://www.acb.com" target="_blank" rel="noopener">ACB</a> y <a href="https://www.euroleaguebasketball.net" target="_blank" rel="noopener">Euroliga</a>. Escudos propiedad de sus clubes.</p>
+    <p>Página de aficionados, sin relación oficial con el Real Madrid. Horarios en hora de Madrid.</p>
+  </footer>
+</main>
+
+<dialog id="dlg"><div class="dlg-h"><h2 id="dlgTitle">Ficha</h2><button class="x" id="dlgClose" aria-label="Cerrar">×</button></div><div id="dlgBody" class="panel-b"></div></dialog>
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+'use strict';
+/* ====================== Configuración ====================== */
+const EURO_SEASON='E2026';
+const EURO_HEADER=c=>`https://live.euroleague.net/api/Header?gamecode=${c}&seasoncode=${EURO_SEASON}`;
+const EURO_BOX=c=>`https://live.euroleague.net/api/Boxscore?gamecode=${c}&seasoncode=${EURO_SEASON}`;
+const ACB_CAL='https://api2.acb.com/api/seasondata/Calendar/season-calendar?season=2027&competitionId=1';
+const COMP={acb:'Liga Endesa',euro:'Euroliga'};
+const RM='Real Madrid';
+
+const CODES={RMA:'Real Madrid',BAS:'Kosner Baskonia',BRE:'Río Breogán',CBC:'La Laguna Tenerife',ZAR:'Casademont Zaragoza',OBR:'Monbus Obradoiro',VAL:'Valencia Basket',JOV:'Asisa Joventut',MAL:'Unicaja Málaga',BAR:'FC Barcelona',BIL:'Surne Bilbao',BGI:'FIATC Girona',BUR:'Recoletas Salud San Pablo Burgos',FLL:'iLERNA Lleida',AND:'MoraBanc Andorra',MUR:'UCAM Murcia',COR:'Leyma Coruña',MAN:'Kids&Us Manresa',
+  PAN:'Panathinaikos AKTOR Athens',FEN:'Fenerbahçe Istanbul',OLY:'Olympiacos Piraeus',HTA:'Hapoel IBI Tel Aviv',CZB:'Crvena Zvezda Belgrade',DUB:'Dubai Basketball',BOL:'Virtus Bologna',BES:'Beşiktaş Istanbul',PAR:'Partizan Belgrade',PRS:'Paris Basketball',EFE:'Anadolu Efes Istanbul',ZAL:'Zalgiris Kaunas',BAY:'FC Bayern Munich',TEL:'Maccabi Rapyd Tel Aviv',ASV:'LDLC ASVEL Villeurbanne',MIL:'Armani Olimpia Milano'};
+const LOGOS={'Real Madrid':'euro-real-madrid','Asisa Joventut':'acb-asisa-joventut','FC Barcelona':'euro-fc-barcelona','Casademont Zaragoza':'acb-casademont-zaragoza','FIATC Girona':'acb-fiatc-girona','iLERNA Lleida':'acb-ilerna-lleida','Kids&Us Manresa':'acb-kids-us-manresa','Kosner Baskonia':'euro-kosner-baskonia','La Laguna Tenerife':'acb-la-laguna-tenerife','Leyma Coruña':'acb-leyma-coru-a','Monbus Obradoiro':'acb-monbus-obradoiro','MoraBanc Andorra':'acb-morabanc-andorra','Recoletas Salud San Pablo Burgos':'acb-recoletas-salud-san-pablo-burgos','Río Breogán':'acb-r-o-breog-n','Surne Bilbao':'acb-surne-bilbao','UCAM Murcia':'acb-ucam-murcia','Unicaja Málaga':'acb-unicaja-m-laga','Valencia Basket':'euro-valencia-basket','Anadolu Efes Istanbul':'euro-anadolu-efes-istanbul','Armani Olimpia Milano':'euro-armani-olimpia-milano','Beşiktaş Istanbul':'euro-besiktas-istanbul','Crvena Zvezda Belgrade':'euro-crvena-zvezda-belgrade','Dubai Basketball':'euro-dubai-basketball','Fenerbahçe Istanbul':'euro-fenerbahce-istanbul','Hapoel IBI Tel Aviv':'euro-hapoel-ibi-tel-aviv','LDLC ASVEL Villeurbanne':'euro-ldlc-asvel-villeurbanne','Maccabi Rapyd Tel Aviv':'euro-maccabi-rapyd-tel-aviv','Olympiacos Piraeus':'euro-olympiacos-piraeus','Panathinaikos AKTOR Athens':'euro-panathinaikos-aktor-athens','Paris Basketball':'euro-paris-basketball','Virtus Bologna':'euro-virtus-bologna','Zalgiris Kaunas':'euro-zalgiris-kaunas','FC Bayern Munich':'euro-fc-bayern-munich','Partizan Belgrade':'euro-partizan-belgrade'};
+
+/* ====================== Utilidades ====================== */
+const $=s=>document.querySelector(s);
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const full=n=>CODES[n]||n;
+const logo=n=>LOGOS[full(n)]?`assets/logos/${LOGOS[full(n)]}.png`:'';
+const img=(n,cls='')=>logo(n)?`<img class="${cls}" src="${logo(n)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`:`<img class="${cls}" alt="" style="visibility:hidden">`;
+const isRM=n=>full(n)===RM;
+const fmt=(o,d)=>new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',...o}).format(d);
+const key=g=>[g.competition,g.round].join('-');
+const icons={
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  tv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="m8 2 4 4 4-4"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  ext:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>',
+};
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2600)}
+
+/* Hora de inicio (Date) en zona de Madrid */
+function madridDate(day,clock){
+  const [y,mo,d]=day.split('-').map(Number),[h,m]=(clock||'12:00').split(':').map(Number);const base=Date.UTC(y,mo-1,d,h,m);let g=base;
+  for(let i=0;i<3;i++){const z=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',timeZoneName:'longOffset'}).formatToParts(new Date(g)).find(p=>p.type==='timeZoneName')?.value||'GMT+01:00';const m2=z.match(/GMT([+-])(\d{2}):(\d{2})/);const off=m2?(m2[1]==='-'?-1:1)*(+m2[2]*60+ +m2[3]):60;g=base-off*60000}
+  return new Date(g);
+}
+const kickoff=g=>g.kickoffUtc?new Date(g.kickoffUtc):(g.time?madridDate(g.date,g.time):null);
+const isFinal=g=>g.played||g.periodLabel==='Final';
+function scoreParts(g){const m=String(g.score||'').match(/(\d+)\s*-\s*(\d+)/);return m?[+m[1],+m[2]]:null}
+function rmWon(g){const s=scoreParts(g);if(!s)return null;if(g.status==='Victoria')return true;if(g.status==='Derrota')return false;return isRM(g.home)?s[0]>s[1]:s[1]>s[0]}
+/* Ventana de directo: 20 min antes hasta 3h30 después del inicio, salvo final */
+function inWindow(g,now=Date.now()){const k=kickoff(g);if(!k||isFinal(g))return false;const d=now-k.getTime();return d>=-20*60e3&&d<=3.5*3600e3}
+function liveGame(now=Date.now()){return data?.games.find(g=>!isFinal(g)&&(g.live||(inWindow(g,now)&&now>=kickoff(g).getTime())))}
+function soonGame(now=Date.now()){return data?.games.find(g=>inWindow(g,now))}
+function nextGame(now=Date.now()){return data?.games.filter(g=>!isFinal(g)&&(kickoff(g)?kickoff(g).getTime()>now-3.5*3600e3:madridDate(g.date,'23:59').getTime()>now)).sort((a,b)=>(kickoff(a)||madridDate(a.date)).getTime()-(kickoff(b)||madridDate(b.date)).getTime())[0]}
+
+/* ====================== Estado ====================== */
+let showAll=false,data=null,filters={when:'next',comp:'all',venue:'all',rival:''},tableComp='acb',boxTeam='rm',lastBox=null,lastBoxCode=null,heroKey='',liveTicker=null,lastLiveOk=0;
+
+/* ====================== Carga de datos ====================== */
+async function loadData(){
+  try{
+    const r=await fetch(`data.json?t=${Date.now()}`,{cache:'no-store'});
+    if(!r.ok)throw Error('HTTP '+r.status);
+    const fresh=await r.json();
+    if(data){ // conserva el marcador en directo si es más reciente que el publicado
+      for(const g of fresh.games){const o=data.games.find(x=>key(x)===key(g));if(o&&o._liveAt&&!g.played&&Date.now()-o._liveAt<5*60e3){Object.assign(g,{score:o.score,periodLabel:o.periodLabel,live:o.live,_liveAt:o._liveAt,_quarters:o._quarters})}}
+    }
+    data=fresh;
+    data.games.sort((a,b)=>(kickoff(a)||madridDate(a.date)).getTime()-(kickoff(b)||madridDate(b.date)).getTime());
+    renderAll();
+    setSync();
+  }catch(e){
+    $('#sync').className='sync err';$('#syncTxt').textContent='Sin conexión · reintentando';
+    if(!data)$('#hero').innerHTML='<div class="loading">No se han podido cargar los datos. Se reintentará automáticamente.</div>';
+  }
+}
+function setSync(){
+  if(!data)return;const up=new Date(data.updatedAt),age=Date.now()-up.getTime();
+  $('#sync').className='sync'+(age>6*3600e3?' stale':'');
+  $('#syncTxt').textContent=(liveGame()&&lastLiveOk&&Date.now()-lastLiveOk<90e3)?'Directo conectado':'Actualizado '+relTime(up);
+  $('#sync').title='Datos publicados: '+fmt({dateStyle:'medium',timeStyle:'short'},up);
+}
+function relTime(d){const m=Math.round((Date.now()-d)/60e3);if(m<1)return 'ahora';if(m<60)return `hace ${m} min`;const h=Math.round(m/60);if(h<24)return `hace ${h} h`;return fmt({day:'numeric',month:'short'},d)}
+
+function renderAll(){renderHero(true);renderSummary();fillRivals();renderGames();renderTable();updateShare()}
+
+/* ====================== Hero ====================== */
+function renderHero(force=false){
+  if(!data)return;const now=Date.now(),live=liveGame(now),g=live||nextGame(now);
+  const el=$('#hero');
+  if(!g){el.innerHTML='<div class="loading">Temporada terminada o calendario pendiente de publicación.</div>';return}
+  const k=key(g)+'|'+(live?'L':'N')+'|'+g.score+'|'+g.periodLabel+'|'+JSON.stringify(g._quarters||'')+'|'+(g.tv||[]).join();
+  if(!force&&k===heroKey){if(!live)updateCountdown(g);return}
+  heroKey=k;
+  const ko=kickoff(g),s=scoreParts(g),homeAway=g.venue==='Casa'?'en casa':'a domicilio';
+  const kick=live?`<span class="kicker live">En directo</span>`:`<span class="kicker">${inWindow(g,now)?'Empieza enseguida':'Próximo partido '+homeAway}</span>`;
+  const center=live
+    ?`<div class="big-score">${s?`${s[0]}<span class="sep">–</span>${s[1]}`:'0<span class="sep">–</span>0'}</div><div class="period">${esc(g.periodLabel||'En juego')}</div>${quartersHTML(g)}`
+    :`<div class="vs">VS</div><div class="when">${ko?fmt({hour:'2-digit',minute:'2-digit'},ko)+' h':'Hora por confirmar'}<small>${fmt({weekday:'long',day:'numeric',month:'long'},ko||madridDate(g.date))}</small></div>`;
+  const statsBtn=!live?'':g.competition==='euro'&&g.liveGameCode
+    ?`<button class="btn ${live?'primary':''}" data-box="${g.liveGameCode}">${icons.chart}Estadísticas${live?' en vivo':''}</button>`
+    :(g.liveStatsUrl?`<a class="btn ${live?'primary':''}" href="${esc(g.liveStatsUrl)}" target="_blank" rel="noopener">${icons.chart}Estadísticas ACB ${icons.ext}</a>`:'');
+  el.innerHTML=`
+    <div class="hero-head">${kick}<span class="comp-tag">${COMP[g.competition]} · Jornada ${g.round}</span></div>
+    <div class="match">
+      <div class="side ${isRM(g.home)?'rm':''}">${img(g.home)}<div class="nm">${esc(full(g.home))}</div></div>
+      <div class="center">${center}</div>
+      <div class="side ${isRM(g.away)?'rm':''}">${img(g.away)}<div class="nm">${esc(full(g.away))}</div></div>
+    </div>
+    ${live?'':'<div class="count" id="count"></div>'}
+    <div class="meta">
+      ${g.tv?.length?`<span>${icons.tv}<span class="tv">${esc(g.tv.join(' · '))}</span></span>`:''}
+      <span>${icons.pin}${g.venue==='Casa'?'Movistar Arena':'Fuera de casa'}</span>
+    </div>
+    <div class="actions">
+      ${statsBtn}
+      ${live?`<button class="btn" id="liveRefresh">${icons.refresh}Actualizar</button>`:`<button class="btn" id="ics">${icons.cal}Añadir al calendario</button>`}
+    </div>
+    ${live?`<div class="note">El marcador se actualiza solo cada 15 segundos.</div>`:''}`;
+  if(!live)updateCountdown(g);
+  $('#ics')?.addEventListener('click',()=>downloadICS(g));
+  $('#liveRefresh')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;await pollLive(true);toast('Marcador actualizado');});
+}
+function quartersHTML(g){const q=g._quarters;if(!q||!q.length)return '';return `<div class="quarters">${q.map((p,i)=>`<span>${i<4?(i+1)+'C':'PR'} ${p[0]}-${p[1]}</span>`).join('')}</div>`}
+function updateCountdown(g){
+  const el=$('#count');if(!el)return;const ko=kickoff(g);
+  if(!ko){el.innerHTML='';return}
+  let ms=ko.getTime()-Date.now();if(ms<=0){el.innerHTML='<div style="min-width:auto;padding:8px 14px"><small>EL PARTIDO ESTÁ A PUNTO DE EMPEZAR</small></div>';return}
+  const v=[Math.floor(ms/864e5),Math.floor(ms%864e5/36e5),Math.floor(ms%36e5/6e4),Math.floor(ms%6e4/1e3)],l=['DÍAS','HORAS','MIN','SEG'];
+  el.innerHTML=v.map((n,i)=>`<div><b>${String(n).padStart(2,'0')}</b><small>${l[i]}</small></div>`).join('');
+}
+function downloadICS(g){
+  const ko=kickoff(g);if(!ko){toast('La hora aún no está confirmada');return}
+  const z=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const end=new Date(ko.getTime()+2*3600e3);
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Madrid Basket//ES','BEGIN:VEVENT',`UID:${key(g)}-${z(ko)}@madrid-basket`,`DTSTAMP:${z(new Date())}`,`DTSTART:${z(ko)}`,`DTEND:${z(end)}`,
+    `SUMMARY:${full(g.home)} - ${full(g.away)} (${COMP[g.competition]})`,`DESCRIPTION:Jornada ${g.round}${g.tv?.length?' · TV: '+g.tv.join(', '):''}\\n${location.href}`,'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:Empieza el partido','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download=`madrid-${key(g)}.ics`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+
+/* ====================== Resumen temporada ====================== */
+function renderSummary(){
+  $('#summary').innerHTML=['acb','euro'].map(c=>{
+    const done=data.games.filter(g=>g.competition===c&&g.played&&scoreParts(g));
+    const w=done.filter(g=>rmWon(g)).length,l=done.length-w;
+    const last=done.slice(-5);
+    const row=(data.standings?.[c]||[]).find(r=>full(r.team)===RM);
+    const pf=done.reduce((a,g)=>{const s=scoreParts(g);return a+(isRM(g.home)?s[0]:s[1])},0),pa=done.reduce((a,g)=>{const s=scoreParts(g);return a+(isRM(g.home)?s[1]:s[0])},0);
+    let streak='';if(done.length){const lastW=rmWon(done[done.length-1]);let n=0;for(let i=done.length-1;i>=0&&rmWon(done[i])===lastW;i--)n++;streak=`${n} ${lastW?(n>1?'victorias':'victoria'):(n>1?'derrotas':'derrota')} seguida${n>1?'s':''}`}
+    return `<article class="sum">
+      <div class="sum-h"><h3>${COMP[c]}</h3>${row?`<span class="pos">${row.position}º de ${data.standings[c].length}</span>`:''}</div>
+      <div class="record"><b>${w}-${l}</b><span>${done.length?streak:'Sin partidos jugados'}</span></div>
+      <div class="form" aria-label="Últimos partidos">${last.map(g=>`<span class="chip ${rmWon(g)?'w':'l'}" title="${esc(full(g.home)+' '+g.score+' '+full(g.away))}">${rmWon(g)?'V':'D'}</span>`).join('')}</div>
+      ${done.length?`<div class="sum-f"><span>Anota <b>${(pf/done.length).toFixed(1)}</b></span><span>Recibe <b>${(pa/done.length).toFixed(1)}</b></span><span>Dif. <b>${pf-pa>0?'+':''}${pf-pa}</b></span></div>`:''}
+    </article>`}).join('');
+}
+
+/* ====================== Lista de partidos ====================== */
+function fillRivals(){
+  const sel=$('#fRival'),cur=sel.value;const rivals=[...new Set(data.games.map(g=>isRM(g.home)?g.away:g.home))].map(full).sort((a,b)=>a.localeCompare(b,'es'));
+  sel.innerHTML='<option value="">Todos los rivales</option>'+rivals.map(r=>`<option${r===cur?' selected':''}>${esc(r)}</option>`).join('');
+}
+function renderGames(){
+  if(!data)return;const now=Date.now(),nx=nextGame(now),lv=liveGame(now);
+  let list=data.games.filter(g=>(filters.comp==='all'||g.competition===filters.comp)&&(filters.venue==='all'||g.venue===filters.venue)&&(!filters.rival||full(isRM(g.home)?g.away:g.home)===filters.rival));
+  if(filters.when==='next')list=list.filter(g=>!g.played);
+  if(filters.when==='done')list=list.filter(g=>g.played).reverse();
+  if(!list.length){$('#games').innerHTML=`<div class="empty">No hay partidos con estos filtros.</div>`;return}
+  const total=list.length;if(!showAll&&filters.when!=='all'&&!filters.rival)list=list.slice(0,8);
+  let month='',html='';
+  for(const g of list){
+    const ko=kickoff(g)||madridDate(g.date),m=fmt({month:'long',year:'numeric'},ko);
+    if(m!==month){month=m;html+=`<div class="month">${esc(m)}</div>`}
+    const s=scoreParts(g),isLive=lv&&key(lv)===key(g),won=g.played?rmWon(g):null,euroBox=g.competition==='euro'&&g.liveGameCode&&(g.played||isLive);
+    const team=(n,i)=>`<div class="tm ${isRM(n)?'rm':''}">${img(n)}<span>${esc(full(n))}</span>${s&&(g.played||isLive)?`<em class="${(i===0?s[0]>s[1]:s[1]>s[0])?'won':''}">${s[i]}</em>`:''}</div>`;
+    const right=isLive?`<span class="res live">EN VIVO</span>`:g.played?`<span class="res ${won?'w':'l'}">${won?'VICTORIA':'DERROTA'}</span>`:`<span class="res pend">${g.time?esc(g.time)+' h':'Por confirmar'}</span>`;
+    const tag=euroBox?'button':(g.played&&g.boxscoreUrl?'a':'div');
+    const attrs=euroBox?`data-box="${g.liveGameCode}" type="button"`:(tag==='a'?`href="${esc(g.boxscoreUrl)}" target="_blank" rel="noopener"`:'');
+    html+=`<${tag} class="game ${tag!=='div'?'click':''} ${isLive?'is-live':''} ${nx&&key(nx)===key(g)&&!isLive?'next-up':''}" ${attrs} style="width:100%;text-align:left;font:inherit;color:inherit">
+      <div class="d"><span>${fmt({weekday:'short'},ko)}</span><b>${fmt({day:'numeric'},ko)}</b><small>${fmt({month:'short'},ko)}</small></div>
+      <div class="g-mid"><div class="g-comp"><span class="${g.competition}">${COMP[g.competition]}</span><span>· J${g.round}</span></div>
+        <div class="g-teams">${team(g.home,0)}${team(g.away,1)}</div>
+        ${!g.played&&g.tv?.length?`<div class="g-tv">📺 ${esc(g.tv.join(' · '))}</div>`:''}</div>
+      <div class="g-right">${right}<span class="venue">${g.venue==='Casa'?'En casa':'Fuera'}</span></div>
+    </${tag}>`;
+  }
+  if(list.length<total)html+=`<button class="more" id="more">Ver los ${total} partidos</button>`;
+  $('#games').innerHTML=html;
+  $('#more')?.addEventListener('click',()=>{showAll=true;renderGames()});
+}
+
+/* ====================== Clasificación ====================== */
+function renderTable(){
+  const rows=data?.standings?.[tableComp]||[];
+  if(!rows.length){$('#standings').innerHTML='<div class="empty">Clasificación no disponible.</div>';return}
+  const zone=p=>tableComp==='acb'?(p<=8?'z1':''):(p<=6?'z1':p<=10?'z2':'');
+  $('#standings').innerHTML=`<table><thead><tr><th>#</th><th style="text-align:left">Equipo</th><th>PJ</th><th>V</th><th>D</th><th>PF</th><th>PC</th><th>Dif</th></tr></thead><tbody>${rows.map(r=>`<tr class="${full(r.team)===RM?'rm':''}"><td class="zone ${zone(r.position)}">${r.position}</td><td><span class="st-team">${img(r.team)}${esc(full(r.team))}</span></td><td>${esc(r.played)}</td><td>${esc(r.wins)}</td><td>${esc(r.losses)}</td><td>${esc(r.pointsFor)}</td><td>${esc(r.pointsAgainst)}</td><td>${+r.difference>0?'+':''}${esc(r.difference)}</td></tr>`).join('')}</tbody></table>`;
+  $('#legend').innerHTML=tableComp==='acb'?'<span><i style="background:var(--win)"></i>Playoff (1-8)</span>':'<span><i style="background:var(--win)"></i>Playoff (1-6)</span><span><i style="background:var(--violet)"></i>Play-in (7-10)</span>';
+}
+
+/* ====================== Estadísticas Euroliga ====================== */
+function niceName(n){const [last,first]=String(n).split(',').map(s=>s.trim());const t=s=>s.toLowerCase().replace(/(^|[\s'\-])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());return first?`${t(first).split(' ')[0][0]}. ${t(last)}`:t(last)}
+async function fetchBox(code){const r=await fetch(EURO_BOX(code)+'&_='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return r.json()}
+function boxHTML(b,side){
+  const stats=b.Stats||[];if(stats.length<2)return '<div class="loading">Estadísticas aún no disponibles.</div>';
+  const rmIdx=stats.findIndex(t=>/REAL MADRID/i.test(t.Team)||(t.PlayersStats?.[0]?.Team==='MAD'));const idx=side==='rm'?(rmIdx<0?0:rmIdx):(rmIdx===0?1:0);
+  const t=stats[idx],ps=(t.PlayersStats||[]).filter(p=>p.Minutes&&p.Minutes!=='DNP');
+  const top=(f)=>ps.reduce((a,p)=>(p[f]??-99)>(a?.[f]??-99)?p:a,null);
+  const L=[['PUNTOS','Points'],['REBOTES','TotalRebounds'],['ASIST.','Assistances']].map(([lbl,f])=>{const p=top(f);return `<div class="leader"><small>${lbl}</small><b>${p?p[f]:'-'}</b><span>${p?esc(niceName(p.Player)):''}</span></div>`}).join('');
+  const mx=f=>Math.max(...ps.map(p=>+p[f]||0));
+  const pct=(m,a)=>a?`${m}/${a}`:'-';
+  const rows=ps.sort((a,b)=>(b.Points-a.Points)||(b.Valuation-a.Valuation)).map(p=>`<tr class="${p.IsPlaying?'on-court':''}"><td class="pl"><small>${esc(p.Dorsal)}</small>${esc(niceName(p.Player))}</td><td>${esc(p.Minutes)}</td><td class="${p.Points===mx('Points')&&p.Points>0?'hot':''}">${p.Points}</td><td>${p.TotalRebounds}</td><td>${p.Assistances}</td><td>${pct(p.FieldGoalsMade2,p.FieldGoalsAttempted2)}</td><td>${pct(p.FieldGoalsMade3,p.FieldGoalsAttempted3)}</td><td>${pct(p.FreeThrowsMade,p.FreeThrowsAttempted)}</td><td>${p.Steals}</td><td>${p.Turnovers}</td><td>${p.FoulsCommited}</td><td class="${p.Valuation===mx('Valuation')?'hot':''}">${p.Valuation}</td></tr>`).join('');
+  const T=t.totr||{};
+  return `<div class="leaders">${L}</div><div class="tbl-wrap"><table><thead><tr><th>Jugador</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>T2</th><th>T3</th><th>TL</th><th>Rob</th><th>Pér</th><th>F</th><th>Val</th></tr></thead><tbody>${rows}</tbody>
+   <tfoot><tr><td>Total</td><td></td><td>${T.Points??''}</td><td>${T.TotalRebounds??''}</td><td>${T.Assistances??''}</td><td>${pct(T.FieldGoalsMade2,T.FieldGoalsAttempted2)}</td><td>${pct(T.FieldGoalsMade3,T.FieldGoalsAttempted3)}</td><td>${pct(T.FreeThrowsMade,T.FreeThrowsAttempted)}</td><td>${T.Steals??''}</td><td>${T.Turnovers??''}</td><td>${T.FoulsCommited??''}</td><td>${T.Valuation??''}</td></tr></tfoot></table></div>
+   <div class="legend"><span>● en pista</span><span>Fuente: Euroliga</span></div>`;
+}
+function teamSeg(b,target,cb){const stats=b.Stats||[];const rmIdx=Math.max(0,stats.findIndex(t=>/REAL MADRID/i.test(t.Team)));const other=stats[rmIdx===0?1:0]?.Team||'Rival';const cap=s=>s.toLowerCase().replace(/(^|\s)\p{L}/gu,m=>m.toUpperCase());
+  target.innerHTML=`<button data-s="rm" class="${boxTeam==='rm'?'on':''}">Real Madrid</button><button data-s="op" class="${boxTeam==='op'?'on':''}">${esc(cap(other))}</button>`;
+  target.querySelectorAll('button').forEach(x=>x.onclick=()=>{boxTeam=x.dataset.s;cb()});}
+
+async function openBox(code){
+  const g=data.games.find(x=>String(x.liveGameCode)===String(code)&&x.competition==='euro');
+  const isLive=g&&liveGame()&&key(liveGame())===key(g);
+  if(isLive){const p=$('#livePanel');p.hidden=false;p.scrollIntoView({behavior:'smooth',block:'start'});await refreshLiveBox(g);return}
+  const dlg=$('#dlg');$('#dlgTitle').textContent=g?`${full(g.home)} ${g.score||''} ${full(g.away)}`:'Estadísticas';$('#dlgBody').innerHTML='<div class="loading">Cargando estadísticas…</div>';
+  if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
+  boxTeam='rm';
+  try{const b=await fetchBox(code);const draw=()=>{$('#dlgBody').innerHTML=`<div style="margin-bottom:12px" class="seg" id="dlgSeg"></div>${quartersTable(b)}`+boxHTML(b,boxTeam);teamSeg(b,$('#dlgSeg'),draw)};draw()}
+  catch(e){$('#dlgBody').innerHTML=`<div class="loading">No se han podido cargar las estadísticas.${g?.boxscoreUrl?` <a href="${esc(g.boxscoreUrl)}" target="_blank" rel="noopener">Ver ficha en DBasket</a>`:''}</div>`}
+}
+function quartersTable(b){const q=b.ByQuarter||[];if(q.length<2)return '';const cols=['Quarter1','Quarter2','Quarter3','Quarter4','Quarter5','Quarter6'].filter(c=>q.some(r=>r[c]!=null&&r[c]!==''));const cap=s=>String(s).toLowerCase().replace(/(^|\s)\p{L}/gu,m=>m.toUpperCase());
+  return `<div class="tbl-wrap" style="margin-bottom:14px"><table><thead><tr><th>Equipo</th>${cols.map((c,i)=>`<th>${i<4?(i+1)+'º':'PR'}</th>`).join('')}<th>Total</th></tr></thead><tbody>${q.map(r=>`<tr><td class="pl">${esc(cap(r.Team))}</td>${cols.map(c=>`<td>${r[c]??''}</td>`).join('')}<td><b>${cols.reduce((a,c)=>a+(+r[c]||0),0)}</b></td></tr>`).join('')}</tbody></table></div>`}
+async function refreshLiveBox(g){
+  if(!g?.liveGameCode)return;
+  try{const b=await fetchBox(g.liveGameCode);lastBox=b;lastBoxCode=g.liveGameCode;drawLiveBox()}catch(e){if(!lastBox)$('#liveBox').innerHTML='<div class="loading">Estadísticas no disponibles todavía.</div>'}
+}
+function drawLiveBox(){if(!lastBox)return;$('#liveBox').innerHTML=boxHTML(lastBox,boxTeam);teamSeg(lastBox,$('#boxTeams'),drawLiveBox)}
+
+/* ====================== Directo ====================== */
+let acbCache=null,acbAt=0,busy=false;
+async function pollLive(force=false){
+  if(!data||busy)return;const now=Date.now();const g=data.games.find(x=>inWindow(x,now)||(x.live&&!isFinal(x)));
+  if(!g){$('#livePanel').hidden=true;return}
+  busy=true;
+  try{
+    if(g.competition==='euro'&&g.liveGameCode){
+      const h=await fetch(EURO_HEADER(g.liveGameCode)+'&_='+now,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error(r.status);return r.json()});
+      const a=+h.ScoreA||0,b=+h.ScoreB||0;
+      if(h.Live||a+b>0){
+        // TeamA = local
+        g.score=`${a} - ${b}`;g._liveAt=Date.now();lastLiveOk=Date.now();
+        const q=String(h.Quarter||'').trim(),clock=String(h.RemainingPartialTime||'').trim();
+        g._quarters=[[h.ScoreQuarter1A,h.ScoreQuarter1B],[h.ScoreQuarter2A,h.ScoreQuarter2B],[h.ScoreQuarter3A,h.ScoreQuarter3B],[h.ScoreQuarter4A,h.ScoreQuarter4B],[h.ScoreExtraTimeA,h.ScoreExtraTimeB]].filter(p=>p[0]!=null&&p[0]!==''&&(+p[0]||+p[1]));
+        if(h.Live){g.live=true;g.periodLabel=q?(/^\d+$/.test(q)?(+q<=4?q+'º cuarto':'Prórroga'):q)+(clock?' · '+clock:''):'En juego'}
+        else{g.live=false;g.periodLabel='Final';g.played=true;g.status=rmWon(g)?'Victoria':'Derrota'}
+      }
+      const panelOpen=!$('#livePanel').hidden;
+      if(g.live&&(panelOpen||force||!lastBox||String(lastBoxCode)!==String(g.liveGameCode))){$('#liveTitle').textContent='Estadísticas en directo';$('#livePanel').hidden=false;await refreshLiveBox(g)}
+    }else if(g.competition==='acb'){
+      if(force||!acbCache||now-acbAt>25e3){acbCache=await fetch(ACB_CAL+'&_='+now,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error(r.status);return r.json()});acbAt=Date.now()}
+      const m=(acbCache.rounds||[]).flatMap(r=>r.matches||[]).find(x=>String(x.id)===String(g.liveMatchId));
+      if(m&&m.homeScore!=null){
+        const st=String(m.matchStatus||'').toUpperCase(),tot=(+m.homeScore||0)+(+m.awayScore||0);
+        if(st==='FINALIZED'){g.score=`${m.homeScore} - ${m.awayScore}`;g.live=false;g.played=true;g.periodLabel='Final';g.status=rmWon(g)?'Victoria':'Derrota'}
+        else if(tot>0||!['','SCHEDULED','PENDING','NOT_STARTED'].includes(st)){g.score=`${m.homeScore} - ${m.awayScore}`;g.live=true;g.periodLabel=m.isOnHalfTime?'Descanso':(m.currentQuarter?(m.currentQuarter<=4?m.currentQuarter+'º cuarto':'Prórroga'):'En juego')}
+        g._liveAt=Date.now();lastLiveOk=Date.now();
+      }
+      $('#livePanel').hidden=true;
+    }
+  }catch(e){if(force)toast('No se pudo conectar con el directo; se reintentará.')}
+  finally{busy=false;renderHero();renderGames();setSync();if(isFinal(g))renderSummary()}
+}
+
+/* ====================== Compartir ====================== */
+function updateShare(){
+  const url=location.href.split('#')[0].split('?')[0];const g=liveGame()||nextGame();
+  let t='🏀 Real Madrid de baloncesto: directo, calendario y clasificación';
+  if(g){const ko=kickoff(g);t=`🏀 ${full(g.home)} - ${full(g.away)} · ${COMP[g.competition]}${ko?' · '+fmt({weekday:'long',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'},ko)+' h':''}${g.tv?.length?' · 📺 '+g.tv[0]:''}`}
+  $('#share').href='https://wa.me/?text='+encodeURIComponent(t+'\n'+url);
+}
+
+/* ====================== Eventos ====================== */
+function seg(id,cb){$(id).querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.v)}))}
+seg('#fWhen',v=>{filters.when=v;showAll=false;renderGames()});
+seg('#fComp',v=>{filters.comp=v;renderGames()});
+seg('#fVenue',v=>{filters.venue=v;renderGames()});
+seg('#fTable',v=>{tableComp=v;renderTable()});
+$('#fRival').addEventListener('change',e=>{filters.rival=e.target.value;if(e.target.value){filters.when='all';$('#fWhen').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v==='all'))}renderGames()});
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('#tab-games').hidden=b.dataset.tab!=='games';$('#tab-table').hidden=b.dataset.tab!=='table'}));
+document.addEventListener('click',e=>{const t=e.target.closest('[data-box]');if(t){e.preventDefault();openBox(t.dataset.box)}});
+$('#dlgClose').addEventListener('click',()=>$('#dlg').close());
+$('#dlg').addEventListener('click',e=>{if(e.target===$('#dlg'))$('#dlg').close()});
+
+/* ====================== Bucles ====================== */
+loadData().then(()=>pollLive());
+setInterval(()=>{const g=data&&nextGame();if(g&&!liveGame())updateCountdown(g)},1000);
+setInterval(()=>{if(data&&data.games.some(g=>inWindow(g)||(g.live&&!isFinal(g))))pollLive()},15e3);
+setInterval(()=>{const active=data&&data.games.some(g=>inWindow(g));if(active||document.visibilityState==='visible')loadData()},60e3);
+setInterval(setSync,30e3);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){loadData().then(()=>pollLive())}});
+</script>
+</body>
+</html>

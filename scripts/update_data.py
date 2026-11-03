@@ -25,51 +25,6 @@ def get(url):
 def get_json(url):
     return json.loads(get(url))
 
-def attach_live_ids(games):
-    """Attach competition live-feed identifiers without making calendar publishing fragile."""
-    try:
-        euro = get_json("https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games")
-        entries = euro if isinstance(euro, list) else euro.get("data", euro.get("games", []))
-        for game in games:
-            if game["competition"] != "euro":
-                continue
-            for item in entries:
-                day = str(item.get("localDate", item.get("date", "")))[:10]
-                if day != game["date"]:
-                    continue
-                home = (item.get("local") or {}).get("club", {}).get("name", "")
-                away = (item.get("road") or {}).get("club", {}).get("name", "")
-                if "REAL MADRID" in home.upper() or "REAL MADRID" in away.upper():
-                    game["liveGameCode"] = item.get("gameCode")
-                    game["liveStatsUrl"] = "https://mediagamecenter.euroleague.net/"
-                    break
-    except Exception as error:
-        print(f"Aviso: no se pudieron añadir identificadores live de Euroliga: {error}")
-    try:
-        calendar = get_json("https://api2.acb.com/api/seasondata/Calendar/season-calendar?season=2027&competitionId=1")
-        teams = {int(team["id"]): team for team in calendar.get("teams", [])}
-        real = next((team for team in teams.values() if int(team.get("clubId", 0)) == 9), None)
-        if real:
-            madrid_id = int(real["id"])
-            matches = [match for rnd in calendar.get("rounds", []) for match in rnd.get("matches", [])]
-            for game in games:
-                if game["competition"] != "acb":
-                    continue
-                for item in matches:
-                    if madrid_id not in (int(item.get("homeTeamId", -1)), int(item.get("awayTeamId", -1))):
-                        continue
-                    start = item.get("startDateTime") or ""
-                    try:
-                        local_day = datetime.fromisoformat(start.replace("Z", "+00:00")).astimezone(ZoneInfo("Europe/Madrid")).date().isoformat()
-                    except ValueError:
-                        continue
-                    if local_day == game["date"] and int(item.get("roundNumber", game["round"])) == game["round"]:
-                        game["liveMatchId"] = item.get("id")
-                        game["liveStatsUrl"] = f"https://live.acb.com/es/partidos/{slug(game['home'])}-vs-{slug(game['away'])}-{item.get('id')}/estadisticas"
-                        break
-    except Exception as error:
-        print(f"Aviso: no se pudieron añadir identificadores live de ACB: {error}")
-
 def normalize_name(value):
     import unicodedata
     return "".join(ch for ch in unicodedata.normalize("NFD", str(value)).upper() if unicodedata.category(ch) != "Mn")
@@ -221,9 +176,140 @@ def parse_standings(page):
     return result
 
 
-PUBLISHED_FIELDS = ("competition", "round", "date", "time", "home", "away", "venue",
-                    "status", "played", "live", "periodLabel", "score", "boxscoreUrl",
+# ---------------------------------------------------------------------------
+# Fuentes oficiales (Euroliga y ACB): horario exacto, TV y marcador en directo.
+# Si fallan, se conserva lo que da DBasket: nunca impiden publicar.
+# ---------------------------------------------------------------------------
+MADRID_TZ = ZoneInfo("Europe/Madrid")
+EURO_GAMES = "https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games"
+EURO_HEADER = "https://live.euroleague.net/api/Header?gamecode={code}&seasoncode=E2026"
+ACB_CALENDAR = "https://api2.acb.com/api/seasondata/Calendar/season-calendar?season=2027&competitionId=1"
+ACB_MADRID_CLUB_ID = 9
+
+
+def utc_to_madrid(value):
+    """'2026-11-04T19:45:00Z' -> (fecha 'YYYY-MM-DD', hora 'HH:MM') en hora de Madrid."""
+    moment = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    local = moment.astimezone(MADRID_TZ)
+    return local.date().isoformat(), local.strftime("%H:%M")
+
+
+def near_kickoff(game, now=None, before_min=20, after_hours=3.5):
+    if not game.get("kickoffUtc"):
+        return False
+    now = now or datetime.now(timezone.utc)
+    start = datetime.fromisoformat(game["kickoffUtc"].replace("Z", "+00:00"))
+    delta = (now - start).total_seconds()
+    return -before_min * 60 <= delta <= after_hours * 3600
+
+
+def quarter_label(quarter, clock=""):
+    q = str(quarter or "").strip()
+    if not q:
+        return None
+    if q.isdigit():
+        n = int(q)
+        label = f"{n}º cuarto" if n <= 4 else ("Prórroga" if n == 5 else f"Prórroga {n - 4}")
+    else:
+        label = q
+    clock = str(clock or "").strip()
+    return label + (f" · {clock}" if clock else "")
+
+
+def enrich_euro(games, now=None):
+    raw = get_json(EURO_GAMES)
+    entries = raw if isinstance(raw, list) else raw.get("data", raw.get("games", []))
+    madrid = [x for x in entries
+              if "MAD" in (((x.get("local") or {}).get("club") or {}).get("code"),
+                           ((x.get("road") or {}).get("club") or {}).get("code"))]
+    for game in games:
+        if game["competition"] != "euro":
+            continue
+        found = next((x for x in madrid if int(x.get("round") or 0) == game["round"]), None)
+        if not found:
+            found = next((x for x in madrid if str(x.get("localDate", ""))[:10] == game["date"]), None)
+        if not found:
+            continue
+        game["liveGameCode"] = found.get("gameCode")
+        game["liveStatsUrl"] = "https://www.euroleaguebasketball.net/euroleague/game-center/"
+        if found.get("utcDate"):
+            game["kickoffUtc"] = str(found["utcDate"]).replace("+00:00", "Z")
+            game["date"], game["time"] = utc_to_madrid(found["utcDate"])
+        if not game["played"] and near_kickoff(game, now):
+            try:
+                header = get_json(EURO_HEADER.format(code=game["liveGameCode"]))
+                a, b = int(header.get("ScoreA") or 0), int(header.get("ScoreB") or 0)
+                if header.get("Live"):
+                    game["live"] = True
+                    game["score"] = f"{a} - {b}"
+                    game["periodLabel"] = quarter_label(header.get("Quarter"), header.get("RemainingPartialTime")) or "En juego"
+                elif a + b > 0:
+                    game["score"] = f"{a} - {b}"
+                    game["live"] = False
+                    game["periodLabel"] = "Final"
+            except Exception as error:
+                print(f"Aviso: marcador Euroliga no disponible: {error}")
+
+
+def enrich_acb(games, now=None):
+    calendar = get_json(ACB_CALENDAR)
+    teams = {int(t["id"]): t for t in calendar.get("teams", [])}
+    real = next((t for t in teams.values() if int(t.get("clubId", 0)) == ACB_MADRID_CLUB_ID), None)
+    if not real:
+        raise RuntimeError("Real Madrid no aparece en el calendario ACB")
+    madrid_id = int(real["id"])
+    matches = []
+    for rnd in calendar.get("rounds", []):
+        for m in rnd.get("matches", []):
+            if madrid_id in (int(m.get("homeTeamId", -1)), int(m.get("awayTeamId", -1))):
+                m = dict(m)
+                m.setdefault("roundNumber", rnd.get("roundNumber"))
+                matches.append(m)
+    for game in games:
+        if game["competition"] != "acb":
+            continue
+        found = next((m for m in matches if int(m.get("roundNumber") or 0) == game["round"]), None)
+        if not found:
+            continue
+        game["liveMatchId"] = found.get("id")
+        home = (teams.get(int(found.get("homeTeamId", -1))) or {}).get("fullName") or game["home"]
+        away = (teams.get(int(found.get("awayTeamId", -1))) or {}).get("fullName") or game["away"]
+        game["liveStatsUrl"] = f"https://live.acb.com/es/partidos/{slug(home)}-vs-{slug(away)}-{found.get('id')}/estadisticas"
+        start = found.get("delayedStartDateTime") or found.get("startDateTime")
+        if start:
+            game["kickoffUtc"] = str(start).replace("+00:00", "Z")
+            game["date"], game["time"] = utc_to_madrid(start)
+        tv = [c.get("broadcaster") for c in sorted(found.get("broadcastChannels") or [], key=lambda c: c.get("order") or 99)
+              if c.get("broadcaster") and c.get("primary", True)]
+        if tv:
+            game["tv"] = tv
+        status = str(found.get("matchStatus") or "").upper()
+        hs, as_ = found.get("homeScore"), found.get("awayScore")
+        if not game["played"] and hs is not None and as_ is not None:
+            if status == "FINALIZED":
+                game["score"] = f"{hs} - {as_}"
+                game["periodLabel"] = "Final"
+                game["live"] = False
+            elif status not in ("", "SCHEDULED", "PENDING", "NOT_STARTED", "POSTPONED", "CANCELLED") or (int(hs) + int(as_) > 0):
+                game["live"] = True
+                game["score"] = f"{hs} - {as_}"
+                game["periodLabel"] = "Descanso" if found.get("isOnHalfTime") else (quarter_label(found.get("currentQuarter")) or "En juego")
+
+
+def enrich_official(games):
+    for name, fn in (("Euroliga", enrich_euro), ("ACB", enrich_acb)):
+        try:
+            fn(games)
+        except Exception as error:
+            print(f"Aviso: datos oficiales de {name} no disponibles ({error}); se mantienen los de DBasket.")
+
+
+PUBLISHED_FIELDS = ("competition", "round", "date", "time", "kickoffUtc", "home", "away", "venue",
+                    "status", "played", "live", "periodLabel", "score", "boxscoreUrl", "tv",
                     "liveGameCode", "liveMatchId", "liveStatsUrl")
+
 
 def semantic_signature(payload):
     games = [{key: game.get(key) for key in PUBLISHED_FIELDS} for game in payload.get("games", [])]
@@ -231,12 +317,11 @@ def semantic_signature(payload):
     return json.dumps({"games": games, "standings": payload.get("standings", {})},
                       ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
+
 def should_publish(payload):
     published_url = os.environ.get("PUBLISHED_DATA_URL", "").strip()
-    if not published_url:
-        print("No hay URL publicada configurada; se publicará para evitar dejar datos sin actualizar.")
-        changed = True
-    else:
+    changed = True
+    if published_url:
         url = published_url + ("&" if "?" in published_url else "?") + f"check={int(time.time())}"
         request = Request(url, headers={"User-Agent": HEADERS["User-Agent"], "Cache-Control": "no-cache"})
         try:
@@ -244,18 +329,25 @@ def should_publish(payload):
                 previous = json.loads(response.read().decode("utf-8", "replace"))
             changed = semantic_signature(payload) != semantic_signature(previous)
         except Exception as error:
-            print(f"No se pudo comparar con la versión publicada ({error}); se publicará para proteger la actualización.")
-            changed = True
+            print(f"No se pudo comparar con la versión publicada ({error}); se publicará.")
+    if os.environ.get("FORCE_PUBLISH") == "true":
+        changed = True
     output_path = os.environ.get("GITHUB_OUTPUT")
     if output_path:
         with open(output_path, "a", encoding="utf-8") as output:
             output.write(f"publish={'true' if changed else 'false'}\n")
-    print("Se publicará: hay cambios en los datos deportivos." if changed else "Sin cambios deportivos; se omite la publicación.")
+    print("Se publicará: hay cambios." if changed else "Sin cambios deportivos; se omite la publicación.")
+
 
 def main():
     all_games, tables = [], {}
-    times = {"acb": schedule_times(ACB_SCHEDULE, "acb"), "euro": schedule_times(EURO_SCHEDULE, "euro")}
-    times["euro"]["2026-10-22"] = "20:05"  # actualizado en el calendario vigente del club
+    times = {}
+    for comp, url in (("acb", ACB_SCHEDULE), ("euro", EURO_SCHEDULE)):
+        try:
+            times[comp] = schedule_times(url, comp)
+        except Exception as error:
+            print(f"Aviso: calendario publicado {comp} no disponible ({error}); se usarán los horarios oficiales.")
+            times[comp] = {}
     for comp in COMPS:
         team_page = get(f"{BASE}/teams/RMA/{SEASON}/{comp}")
         league_page = get(f"{BASE}/seasons/{comp}/{SEASON}")
@@ -265,8 +357,8 @@ def main():
         tables[comp] = parse_standings(league_page)
         all_games.extend(games)
         time.sleep(2)
+    enrich_official(all_games)
     all_games.sort(key=lambda g: (g["date"], g["competition"], g["round"]))
-    attach_live_ids(all_games)
     payload = {
         "season": SEASON,
         "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -275,10 +367,12 @@ def main():
         "games": all_games,
         "standings": tables,
     }
+    os.makedirs("site", exist_ok=True)
     with open("site/data.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
     should_publish(payload)
-    print(f"Wrote {len(all_games)} games; ACB standings {len(tables['acb'])}, EuroLeague standings {len(tables['euro'])}")
+    print(f"Partidos: {len(all_games)} · ACB {len(tables['acb'])} equipos · Euroliga {len(tables['euro'])} equipos")
+
 
 if __name__ == "__main__":
     main()
