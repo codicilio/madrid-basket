@@ -317,9 +317,87 @@ def enrich_official(games):
             print(f"Aviso: datos oficiales de {name} no disponibles ({error}); se mantienen los de DBasket.")
 
 
+# ---------------------------------------------------------------------------
+# Canal exacto en España (guía de programación pública EPG dobleM, XMLTV).
+# Se consulta como mucho una vez por hora; el resto de ejecuciones reutilizan
+# los canales ya publicados. Si falla, se mantiene lo que había.
+# ---------------------------------------------------------------------------
+EPG_URL = "https://raw.githubusercontent.com/davidmuma/EPG_dobleM/master/guiatv.xml.gz"
+MOVISTAR_DIALS = {"movistar plus": 7, "m+ vamos": 8, "vamos": 8, "m+ baloncesto": 66, "m+ baloncesto 2": 67,
+                  "m+ baloncesto 3": 194, "m+ baloncesto 4": 195, "m+ baloncesto 5": 196}
+COMP_EPG = {"euro": "Euroliga", "acb": "Liga Endesa"}
+
+
+def previous_payload():
+    url = os.environ.get("PUBLISHED_DATA_URL", "").strip()
+    if not url:
+        return None
+    url += ("&" if "?" in url else "?") + f"check={int(time.time())}"
+    try:
+        request = Request(url, headers={"User-Agent": HEADERS["User-Agent"], "Cache-Control": "no-cache"})
+        with urlopen(request, timeout=15) as response:
+            return json.loads(response.read().decode("utf-8", "replace"))
+    except Exception as error:
+        print(f"Aviso: no se pudo leer la versión publicada ({error}).")
+        return None
+
+
+def epg_channels(games, now=None):
+    """Devuelve {(competición, jornada): [{name, dial}]} con los canales que emiten en directo cada partido."""
+    import gzip
+    now = now or datetime.now(timezone.utc)
+    targets = [g for g in games if not g["played"] and g.get("kickoffUtc")
+               and -1 <= (datetime.fromisoformat(g["kickoffUtc"].replace("Z", "+00:00")) - now).total_seconds() / 86400 <= 10]
+    if not targets:
+        return {}
+    with urlopen(Request(EPG_URL, headers=HEADERS), timeout=90) as response:
+        raw = response.read()
+    text = (gzip.decompress(raw) if raw[:2] == b"\x1f\x8b" else raw).decode("utf-8", "replace")
+    names = {cid: html.unescape(name).strip() for cid, name in
+             re.findall(r'<channel id="([^"]+)">\s*<display-name[^>]*>([^<]+)', text)}
+    result = {}
+    for p in re.finditer(r'<programme start="(\d{14}) ([+-]\d{4})"[^>]*channel="([^"]+)"[^>]*>\s*<title[^>]*>([^<]+)', text):
+        title = html.unescape(p.group(4))
+        if "Real Madrid" not in title:
+            continue
+        start = datetime.strptime(p.group(1) + p.group(2), "%Y%m%d%H%M%S%z")
+        for g in targets:
+            if COMP_EPG[g["competition"]] not in title or not re.search(rf"Jornada {g['round']}\b", title):
+                continue
+            kickoff = datetime.fromisoformat(g["kickoffUtc"].replace("Z", "+00:00"))
+            if not -60 <= (start - kickoff).total_seconds() / 60 <= 20:
+                continue  # descarta reemisiones
+            name = names.get(p.group(3), p.group(3))
+            item = {"name": name.replace("Movistar Plus", "Movistar Plus+") if name == "Movistar Plus" else name,
+                    "dial": MOVISTAR_DIALS.get(name.lower())}
+            lst = result.setdefault((g["competition"], g["round"]), [])
+            if item["name"] not in [x["name"] for x in lst]:
+                lst.append(item)
+    return result
+
+
+def enrich_channels(games, previous, now=None):
+    now = now or datetime.now(timezone.utc)
+    old = {(g.get("competition"), g.get("round")): g.get("channels") for g in (previous or {}).get("games", []) if g.get("channels")}
+    for g in games:
+        if (g["competition"], g["round"]) in old:
+            g["channels"] = old[(g["competition"], g["round"])]
+    if now.minute >= 5 and old and os.environ.get("FORCE_PUBLISH") != "true":
+        return  # la guía se refresca una vez por hora
+    try:
+        fresh = epg_channels(games, now)
+    except Exception as error:
+        print(f"Aviso: guía de TV no disponible ({error}); se mantienen los canales anteriores.")
+        return
+    for g in games:
+        if (g["competition"], g["round"]) in fresh:
+            g["channels"] = fresh[(g["competition"], g["round"])]
+    print(f"Canales de TV encontrados para {len(fresh)} partidos.")
+
+
 PUBLISHED_FIELDS = ("competition", "round", "date", "time", "kickoffUtc", "home", "away", "venue",
                     "status", "played", "live", "periodLabel", "score", "boxscoreUrl", "tv",
-                    "liveGameCode", "liveMatchId", "liveStatsUrl")
+                    "liveGameCode", "liveMatchId", "liveStatsUrl", "channels")
 
 
 def semantic_signature(payload):
@@ -329,18 +407,10 @@ def semantic_signature(payload):
                       ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
-def should_publish(payload):
-    published_url = os.environ.get("PUBLISHED_DATA_URL", "").strip()
+def should_publish(payload, previous=None):
     changed = True
-    if published_url:
-        url = published_url + ("&" if "?" in published_url else "?") + f"check={int(time.time())}"
-        request = Request(url, headers={"User-Agent": HEADERS["User-Agent"], "Cache-Control": "no-cache"})
-        try:
-            with urlopen(request, timeout=15) as response:
-                previous = json.loads(response.read().decode("utf-8", "replace"))
-            changed = semantic_signature(payload) != semantic_signature(previous)
-        except Exception as error:
-            print(f"No se pudo comparar con la versión publicada ({error}); se publicará.")
+    if previous:
+        changed = semantic_signature(payload) != semantic_signature(previous)
     if os.environ.get("FORCE_PUBLISH") == "true":
         changed = True
     output_path = os.environ.get("GITHUB_OUTPUT")
@@ -369,6 +439,8 @@ def main():
         all_games.extend(games)
         time.sleep(2)
     enrich_official(all_games)
+    previous = previous_payload()
+    enrich_channels(all_games, previous)
     all_games.sort(key=lambda g: (g["date"], g["competition"], g["round"]))
     payload = {
         "season": SEASON,
@@ -381,7 +453,7 @@ def main():
     os.makedirs("site", exist_ok=True)
     with open("site/data.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
-    should_publish(payload)
+    should_publish(payload, previous)
     print(f"Partidos: {len(all_games)} · ACB {len(tables['acb'])} equipos · Euroliga {len(tables['euro'])} equipos")
 
 

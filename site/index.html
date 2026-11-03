@@ -324,7 +324,12 @@ const img=(n,cls='')=>logo(n)?`<img class="${cls}" src="${logo(n)}" alt="" loadi
 const isRM=n=>full(n)===RM;
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 /* Canales de TV en España: [{name,url,free}] */
-const tvList=g=>(g.tv||[]).map(x=>typeof x==='string'?{name:x,url:null,free:/abierto|teledeporte|rtve|tv3|3cat|esport3|tvg|arag[oó]n tv|etb/i.test(x)}:x).filter(x=>x&&x.name);
+const tvList=g=>{const base=(g.tv||[]).map(x=>typeof x==='string'?{name:x,url:null,free:/abierto|teledeporte|rtve|tv3|3cat|esport3|tvg|arag[oó]n tv|etb/i.test(x)}:x).filter(x=>x&&x.name);
+  if(!g.channels?.length){ // aún sin canal exacto (la guía cubre ~1 semana): plataforma + opciones gratuitas
+    const l=g.competition==='acb'?base.filter(x=>x.free||/^dazn$/i.test(x.name)):base;
+    return l.map((x,i)=>i===0&&!x.free?{...x,name:x.name+' · canal por confirmar'}:x)}
+  // canal exacto de la guía de TV; se añaden las opciones gratuitas
+  return [...g.channels.map(c=>({name:c.dial?`${c.name} (dial ${c.dial})`:c.name,url:null,free:false})),...base.filter(x=>x.free)]};
 const tvNames=g=>tvList(g).map(x=>x.name);
 /* Resumen gratuito en los canales oficiales de YouTube */
 const hlUrl=g=>g.competition==='euro'?'https://www.youtube.com/@EuroLeague/search?query='+encodeURIComponent(`${full(g.home)} ${full(g.away)} resumen jornada ${g.round}`):'https://www.youtube.com/@ACBCOM/search?query='+encodeURIComponent(`${full(g.home)} ${full(g.away)} resumen Liga Endesa`);
