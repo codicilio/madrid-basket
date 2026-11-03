@@ -218,6 +218,15 @@ def quarter_label(quarter, clock=""):
     return label + (f" · {clock}" if clock else "")
 
 
+# Cadenas gratuitas en España (en abierto o con registro gratuito).
+FREE_TV = ("abierto", "teledeporte", "rtve", "tv3", "3cat", "esport3", "tvg", "aragón tv", "aragon tv", "etb", "à punt", "a punt", "telemadrid", "canal sur")
+
+
+def tv_channel(name, url=None):
+    name = re.sub(r"\s+", " ", str(name or "")).strip()
+    return {"name": name, "url": url or None, "free": any(hint in name.lower() for hint in FREE_TV)}
+
+
 def enrich_euro(games, now=None):
     raw = get_json(EURO_GAMES)
     entries = raw if isinstance(raw, list) else raw.get("data", raw.get("games", []))
@@ -233,6 +242,7 @@ def enrich_euro(games, now=None):
         if not found:
             continue
         game["liveGameCode"] = found.get("gameCode")
+        game["tv"] = [tv_channel("Movistar Plus+", "https://ver.movistarplus.es/")]
         game["liveStatsUrl"] = "https://www.euroleaguebasketball.net/euroleague/game-center/"
         if found.get("utcDate"):
             game["kickoffUtc"] = str(found["utcDate"]).replace("+00:00", "Z")
@@ -281,7 +291,8 @@ def enrich_acb(games, now=None):
         if start:
             game["kickoffUtc"] = str(start).replace("+00:00", "Z")
             game["date"], game["time"] = utc_to_madrid(start)
-        tv = [c.get("broadcaster") for c in sorted(found.get("broadcastChannels") or [], key=lambda c: c.get("order") or 99)
+        tv = [tv_channel(c.get("broadcaster"), c.get("link"))
+              for c in sorted(found.get("broadcastChannels") or [], key=lambda c: c.get("order") or 99)
               if c.get("broadcaster") and c.get("primary", True)]
         if tv:
             game["tv"] = tv
