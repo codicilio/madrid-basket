@@ -165,7 +165,12 @@ tfoot td{font-weight:700;border-bottom:0;color:var(--muted)}
 .tvs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:12px 20px 0;position:relative;z-index:1}
 .tvs .lbl{font-size:12px;color:var(--muted);align-self:center;margin-right:2px}
 .tvchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:#0005;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;text-decoration:none}
-.tvchip:hover{border-color:var(--gold);color:var(--gold2)}
+.actions:not(:has(*)){display:none}
+.hero:has(.actions:not(:has(*))) .meta{padding-bottom:20px}
+.g-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.g-links a,.g-links span{font-size:12px;font-weight:600;padding:3px 9px;border-radius:7px;background:#ffffff0d;border:1px solid var(--line);text-decoration:none;cursor:pointer;color:var(--text)}
+.g-links a:first-child{color:#ff9a9a;border-color:#ff6b6b55}
+.g-links a:hover,.g-links span:hover{border-color:var(--gold);color:var(--gold2)}
 .tvchip.free{border-color:#3ccf8e80;color:#bff3da}
 .tvchip.free::after{content:"GRATIS";font-size:9px;font-weight:800;letter-spacing:.08em;background:var(--win);color:#08111e;border-radius:5px;padding:1px 5px}
 .btn.watch{background:#ff4757;border-color:#ff4757;color:#fff}
@@ -321,6 +326,8 @@ const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 /* Canales de TV en España: [{name,url,free}] */
 const tvList=g=>(g.tv||[]).map(x=>typeof x==='string'?{name:x,url:null,free:/abierto|teledeporte|rtve|tv3|3cat|esport3|tvg|arag[oó]n tv|etb/i.test(x)}:x).filter(x=>x&&x.name);
 const tvNames=g=>tvList(g).map(x=>x.name);
+/* Resumen gratuito en los canales oficiales de YouTube */
+const hlUrl=g=>g.competition==='euro'?'https://www.youtube.com/@EuroLeague/search?query='+encodeURIComponent(`${full(g.home)} ${full(g.away)} resumen jornada ${g.round}`):'https://www.youtube.com/@ACBCOM/search?query='+encodeURIComponent(`${full(g.home)} ${full(g.away)} resumen Liga Endesa`);
 const watchOf=g=>{const l=tvList(g).filter(x=>x.url);return l.find(x=>x.free)||l[0]||null};
 const fmt=(o,d)=>new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',...o}).format(d);
 const key=g=>[g.competition,g.round].join('-');
@@ -390,7 +397,6 @@ function renderHero(force=false){
   const k=key(g)+'|'+(live?'L':'N')+'|'+g.score+'|'+g.periodLabel+'|'+JSON.stringify(g._quarters||'')+'|'+tvNames(g).join();
   if(!force&&k===heroKey){if(!live)updateCountdown(g);return}
   heroKey=k;
-  const watch=watchOf(g);
   const ko=kickoff(g),s=scoreParts(g),homeAway=g.venue==='Casa'?'en casa':'a domicilio';
   const kick=live?`<span class="kicker live">En directo</span>`:`<span class="kicker">${inWindow(g,now)?'Empieza enseguida':'Próximo partido '+homeAway}</span>`;
   const center=live
@@ -407,18 +413,16 @@ function renderHero(force=false){
       <div class="side ${isRM(g.away)?'rm':''}">${img(g.away)}<div class="nm">${esc(full(g.away))}</div></div>
     </div>
     ${live?'':'<div class="count" id="count"></div>'}
-    ${tvList(g).length?`<div class="tvs"><span class="lbl">Dónde verlo:</span>${tvList(g).map(c=>c.url?`<a class="tvchip ${c.free?'free':''}" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a>`:`<span class="tvchip ${c.free?'free':''}">${esc(c.name)}</span>`).join('')}</div>`:''}
+    ${tvList(g).length?`<div class="tvs"><span class="lbl">Se emite en:</span>${tvList(g).map(c=>`<span class="tvchip ${c.free?'free':''}">${esc(c.name)}</span>`).join('')}</div>`:''}
     <div class="meta">
       <span>${icons.pin}${g.venue==='Casa'?'Movistar Arena':'Fuera de casa'}</span>
     </div>
     <div class="actions">
-      ${watch?`<a class="btn watch ${watch.free?'free':''}" href="${esc(watch.url)}" target="_blank" rel="noopener">${icons.play}${live?'Ver en directo':'Ver'} en ${esc(watch.name)}${watch.free?' (gratis)':''}</a>`:''}
       ${statsBtn}
-      ${live?`<button class="btn" id="liveRefresh">${icons.refresh}Actualizar</button>`:`<button class="btn" id="ics">${icons.cal}Añadir al calendario</button>`}
+      ${live?`<button class="btn" id="liveRefresh">${icons.refresh}Actualizar</button>`:''}
     </div>
     ${live?`<div class="note">El marcador se actualiza solo cada 15 segundos.</div>`:''}`;
   if(!live)updateCountdown(g);
-  $('#ics')?.addEventListener('click',()=>downloadICS(g));
   $('#liveRefresh')?.addEventListener('click',async e=>{e.currentTarget.disabled=true;await pollLive(true);toast('Marcador actualizado');});
 }
 function quartersHTML(g){const q=g._quarters;if(!q||!q.length)return '';return `<div class="quarters">${q.map((p,i)=>`<span>${i<4?(i+1)+'C':'PR'} ${p[0]}-${p[1]}</span>`).join('')}</div>`}
@@ -429,15 +433,6 @@ function updateCountdown(g){
   const v=[Math.floor(ms/864e5),Math.floor(ms%864e5/36e5),Math.floor(ms%36e5/6e4),Math.floor(ms%6e4/1e3)],l=['DÍAS','HORAS','MIN','SEG'];
   el.innerHTML=v.map((n,i)=>`<div><b>${String(n).padStart(2,'0')}</b><small>${l[i]}</small></div>`).join('');
 }
-function downloadICS(g){
-  const ko=kickoff(g);if(!ko){toast('La hora aún no está confirmada');return}
-  const z=d=>d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-  const end=new Date(ko.getTime()+2*3600e3);
-  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Madrid Basket//ES','BEGIN:VEVENT',`UID:${key(g)}-${z(ko)}@madrid-basket`,`DTSTAMP:${z(new Date())}`,`DTSTART:${z(ko)}`,`DTEND:${z(end)}`,
-    `SUMMARY:${full(g.home)} - ${full(g.away)} (${COMP[g.competition]})`,`DESCRIPTION:Jornada ${g.round}${tvList(g).length?' · TV: '+tvNames(g).join(', '):''}\\n${location.href}`,'BEGIN:VALARM','TRIGGER:-PT30M','ACTION:DISPLAY','DESCRIPTION:Empieza el partido','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download=`madrid-${key(g)}.ics`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-}
-
 /* ====================== Resumen temporada ====================== */
 function renderSummary(){
   $('#summary').innerHTML=['acb','euro'].map(c=>{
@@ -474,15 +469,14 @@ function renderGames(){
     const s=scoreParts(g),isLive=lv&&key(lv)===key(g),won=g.played?rmWon(g):null,euroBox=g.competition==='euro'&&g.liveGameCode&&(g.played||isLive);
     const team=(n,i)=>`<div class="tm ${isRM(n)?'rm':''}">${img(n)}<span>${esc(full(n))}</span>${s&&(g.played||isLive)?`<em class="${(i===0?s[0]>s[1]:s[1]>s[0])?'won':''}">${s[i]}</em>`:''}</div>`;
     const right=isLive?`<span class="res live">EN VIVO</span>`:g.played?`<span class="res ${won?'w':'l'}">${won?'VICTORIA':'DERROTA'}</span>`:`<span class="res pend">${g.time?esc(g.time)+' h':'Por confirmar'}</span>`;
-    const tag=euroBox?'button':(g.played&&g.boxscoreUrl?'a':'div');
-    const attrs=euroBox?`data-box="${g.liveGameCode}" type="button"`:(tag==='a'?`href="${esc(g.boxscoreUrl)}" target="_blank" rel="noopener"`:'');
-    html+=`<${tag} class="game ${tag!=='div'?'click':''} ${isLive?'is-live':''} ${nx&&key(nx)===key(g)&&!isLive?'next-up':''}" ${attrs} style="width:100%;text-align:left;font:inherit;color:inherit">
+    const links=g.played?`<div class="g-links"><a href="${esc(hlUrl(g))}" target="_blank" rel="noopener">▶ Resumen</a>${euroBox?`<span data-box="${g.liveGameCode}">Estadísticas</span>`:(g.boxscoreUrl?`<a href="${esc(g.boxscoreUrl)}" target="_blank" rel="noopener">Estadísticas</a>`:'')}</div>`:'';
+    html+=`<div class="game ${euroBox?'click':''} ${isLive?'is-live':''} ${nx&&key(nx)===key(g)&&!isLive?'next-up':''}" ${euroBox?`data-box="${g.liveGameCode}" role="button" tabindex="0"`:''}>
       <div class="d"><span>${fmt({weekday:'short'},ko)}</span><b>${fmt({day:'numeric'},ko)}</b><small>${fmt({month:'short'},ko)}</small></div>
       <div class="g-mid"><div class="g-comp"><span class="${g.competition}">${COMP[g.competition]}</span><span>· J${g.round}</span></div>
         <div class="g-teams">${team(g.home,0)}${team(g.away,1)}</div>
-        ${!g.played&&tvList(g).length?`<div class="g-tv">📺 ${tvList(g).map(c=>esc(c.name)+(c.free?' <b>gratis</b>':'')).join(' · ')}</div>`:''}</div>
+        ${!g.played&&tvList(g).length?`<div class="g-tv">📺 ${tvList(g).map(c=>esc(c.name)+(c.free?' <b>gratis</b>':'')).join(' · ')}</div>`:''}${links}</div>
       <div class="g-right">${right}<span class="venue">${g.venue==='Casa'?'En casa':'Fuera'}</span></div>
-    </${tag}>`;
+    </div>`;
   }
   if(list.length<total)html+=`<button class="more" id="more">Ver los ${total} partidos</button>`;
   $('#games').innerHTML=html;
@@ -526,7 +520,7 @@ async function openBox(code){
   const dlg=$('#dlg');$('#dlgTitle').textContent=g?`${full(g.home)} ${g.score||''} ${full(g.away)}`:'Estadísticas';$('#dlgBody').innerHTML='<div class="loading">Cargando estadísticas…</div>';
   if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
   boxTeam='rm';
-  try{const b=await fetchBox(code);const draw=()=>{$('#dlgBody').innerHTML=`<div style="margin-bottom:12px" class="seg" id="dlgSeg"></div>${quartersTable(b)}`+boxHTML(b,boxTeam);teamSeg(b,$('#dlgSeg'),draw)};draw()}
+  try{const b=await fetchBox(code);const draw=()=>{$('#dlgBody').innerHTML=`${g?`<a class="btn" style="float:right" href="${esc(hlUrl(g))}" target="_blank" rel="noopener">▶ Resumen en vídeo</a>`:''}<div style="margin-bottom:12px" class="seg" id="dlgSeg"></div>${quartersTable(b)}`+boxHTML(b,boxTeam);teamSeg(b,$('#dlgSeg'),draw)};draw()}
   catch(e){$('#dlgBody').innerHTML=`<div class="loading">No se han podido cargar las estadísticas.${g?.boxscoreUrl?` <a href="${esc(g.boxscoreUrl)}" target="_blank" rel="noopener">Ver ficha en DBasket</a>`:''}</div>`}
 }
 function quartersTable(b){const q=b.ByQuarter||[];if(q.length<2)return '';const cols=['Quarter1','Quarter2','Quarter3','Quarter4','Quarter5','Quarter6'].filter(c=>q.some(r=>r[c]!=null&&r[c]!==''));const cap=s=>String(s).toLowerCase().replace(/(^|\s)\p{L}/gu,m=>m.toUpperCase());
@@ -590,7 +584,7 @@ function setRival(v){filters.rival=norm(v);$('#fRivalClear').hidden=!v;filters.w
 $('#fRival').addEventListener('input',e=>setRival(e.target.value.trim()));
 $('#fRivalClear').addEventListener('click',()=>{$('#fRival').value='';setRival('');$('#fRival').focus()});
 document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('#tab-games').hidden=b.dataset.tab!=='games';$('#tab-table').hidden=b.dataset.tab!=='table'}));
-document.addEventListener('click',e=>{const t=e.target.closest('[data-box]');if(t){e.preventDefault();openBox(t.dataset.box)}});
+document.addEventListener('click',e=>{if(e.target.closest('a'))return;const t=e.target.closest('[data-box]');if(t){e.preventDefault();openBox(t.dataset.box)}});
 $('#dlgClose').addEventListener('click',()=>$('#dlg').close());
 $('#dlg').addEventListener('click',e=>{if(e.target===$('#dlg'))$('#dlg').close()});
 
