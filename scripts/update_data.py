@@ -292,7 +292,7 @@ def enrich_acb(games, now=None):
                 game["score"] = f"{hs} - {as_}"
                 game["periodLabel"] = "Final"
                 game["live"] = False
-            elif status not in ("", "SCHEDULED", "PENDING", "NOT_STARTED", "POSTPONED", "CANCELLED") or (int(hs) + int(as_) > 0):
+            elif near_kickoff(game, now) and (int(hs) + int(as_) > 0 or not (status.startswith("NOT_") or status in ("", "SCHEDULED", "PENDING", "POSTPONED", "CANCELLED"))):
                 game["live"] = True
                 game["score"] = f"{hs} - {as_}"
                 game["periodLabel"] = "Descanso" if found.get("isOnHalfTime") else (quarter_label(found.get("currentQuarter")) or "En juego")

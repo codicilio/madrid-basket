@@ -317,7 +317,7 @@ function scoreParts(g){const m=String(g.score||'').match(/(\d+)\s*-\s*(\d+)/);re
 function rmWon(g){const s=scoreParts(g);if(!s)return null;if(g.status==='Victoria')return true;if(g.status==='Derrota')return false;return isRM(g.home)?s[0]>s[1]:s[1]>s[0]}
 /* Ventana de directo: 20 min antes hasta 3h30 después del inicio, salvo final */
 function inWindow(g,now=Date.now()){const k=kickoff(g);if(!k||isFinal(g))return false;const d=now-k.getTime();return d>=-20*60e3&&d<=3.5*3600e3}
-function liveGame(now=Date.now()){return data?.games.find(g=>!isFinal(g)&&(g.live||(inWindow(g,now)&&now>=kickoff(g).getTime())))}
+function liveGame(now=Date.now()){return data?.games.find(g=>!isFinal(g)&&inWindow(g,now)&&(g.live||now>=kickoff(g).getTime()))}
 function soonGame(now=Date.now()){return data?.games.find(g=>inWindow(g,now))}
 function nextGame(now=Date.now()){return data?.games.filter(g=>!isFinal(g)&&(kickoff(g)?kickoff(g).getTime()>now-3.5*3600e3:madridDate(g.date,'23:59').getTime()>now)).sort((a,b)=>(kickoff(a)||madridDate(a.date)).getTime()-(kickoff(b)||madridDate(b.date)).getTime())[0]}
 
@@ -508,7 +508,7 @@ function drawLiveBox(){if(!lastBox)return;$('#liveBox').innerHTML=boxHTML(lastBo
 /* ====================== Directo ====================== */
 let acbCache=null,acbAt=0,busy=false;
 async function pollLive(force=false){
-  if(!data||busy)return;const now=Date.now();const g=data.games.find(x=>inWindow(x,now)||(x.live&&!isFinal(x)));
+  if(!data||busy)return;const now=Date.now();const g=data.games.find(x=>inWindow(x,now));
   if(!g){$('#livePanel').hidden=true;return}
   busy=true;
   try{
@@ -531,7 +531,7 @@ async function pollLive(force=false){
       if(m&&m.homeScore!=null){
         const st=String(m.matchStatus||'').toUpperCase(),tot=(+m.homeScore||0)+(+m.awayScore||0);
         if(st==='FINALIZED'){g.score=`${m.homeScore} - ${m.awayScore}`;g.live=false;g.played=true;g.periodLabel='Final';g.status=rmWon(g)?'Victoria':'Derrota'}
-        else if(tot>0||!['','SCHEDULED','PENDING','NOT_STARTED'].includes(st)){g.score=`${m.homeScore} - ${m.awayScore}`;g.live=true;g.periodLabel=m.isOnHalfTime?'Descanso':(m.currentQuarter?(m.currentQuarter<=4?m.currentQuarter+'º cuarto':'Prórroga'):'En juego')}
+        else if(tot>0||!(st.startsWith('NOT_')||['','SCHEDULED','PENDING','POSTPONED','CANCELLED'].includes(st))){g.score=`${m.homeScore} - ${m.awayScore}`;g.live=true;g.periodLabel=m.isOnHalfTime?'Descanso':(m.currentQuarter?(m.currentQuarter<=4?m.currentQuarter+'º cuarto':'Prórroga'):'En juego')}
         g._liveAt=Date.now();lastLiveOk=Date.now();
       }
       $('#livePanel').hidden=true;
@@ -563,7 +563,7 @@ $('#dlg').addEventListener('click',e=>{if(e.target===$('#dlg'))$('#dlg').close()
 /* ====================== Bucles ====================== */
 loadData().then(()=>pollLive());
 setInterval(()=>{const g=data&&nextGame();if(g&&!liveGame())updateCountdown(g)},1000);
-setInterval(()=>{if(data&&data.games.some(g=>inWindow(g)||(g.live&&!isFinal(g))))pollLive()},15e3);
+setInterval(()=>{if(data&&data.games.some(g=>inWindow(g)))pollLive()},15e3);
 setInterval(()=>{const active=data&&data.games.some(g=>inWindow(g));if(active||document.visibilityState==='visible')loadData()},60e3);
 setInterval(setSync,30e3);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){loadData().then(()=>pollLive())}});
