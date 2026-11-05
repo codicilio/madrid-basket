@@ -12,14 +12,11 @@ jobs:
         run: |
           import json, urllib.request, time
           get=lambda u: urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=30).read().decode()
-          d=json.loads(get(f"https://codicilio.github.io/madrid-basket/data.json?x={int(time.time())}"))
-          print("updatedAt", d["updatedAt"])
-          for g in d["games"]:
-              if g["date"] in ("2026-11-04","2026-11-08"): print({k:g.get(k) for k in ("date","home","away","played","live","status","score","periodLabel","boxscoreUrl","liveGameCode","channels","tv")})
-          for c in ("acb","euro"): print(c, [r for r in d["standings"][c] if r["team"]=="RMA"])
-          h=json.loads(get("https://live.euroleague.net/api/Header?gamecode=91&seasoncode=E2026"))
-          print("HEADER", {k:h.get(k) for k in ("Live","TeamA","TeamB","ScoreA","ScoreB","Quarter")})
-          b=json.loads(get("https://live.euroleague.net/api/Boxscore?gamecode=91&seasoncode=E2026"))
-          print("BOX teams", [t["Team"] for t in b["Stats"]], "players", [len(t["PlayersStats"]) for t in b["Stats"]])
-          html=get(f"https://codicilio.github.io/madrid-basket/?x={int(time.time())}")
-          print("HTML has hlUrl", "hlUrl" in html, "channels" in html)
+          import re
+          t=get("https://dbasket.net/teams/RMA/2026-27/euro")
+          m=re.search(r'partido-a-partido.*?</table>', t, re.S)
+          blk=m.group(0) if m else "NO BLOCK"
+          for r in re.findall(r'<tr.*?</tr>', blk, re.S):
+              if '04-11-2026' in r or '30-10-2026' in r: print("ROW", re.sub(r"\s+"," ",r)[:1500])
+          L=get("https://dbasket.net/seasons/euro/2026-27")
+          k=L.find("RMA"); print("STAND", re.sub(r"\s+"," ",L[k-300:k+400]))
