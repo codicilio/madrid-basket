@@ -1,0 +1,25 @@
+name: Revisión (temporal)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - shell: python
+        run: |
+          import json, urllib.request, time
+          get=lambda u: urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=30).read().decode()
+          d=json.loads(get(f"https://codicilio.github.io/madrid-basket/data.json?x={int(time.time())}"))
+          print("updatedAt", d["updatedAt"])
+          for g in d["games"]:
+              if g["date"] in ("2026-11-04","2026-11-08"): print({k:g.get(k) for k in ("date","home","away","played","live","status","score","periodLabel","boxscoreUrl","liveGameCode","channels","tv")})
+          for c in ("acb","euro"): print(c, [r for r in d["standings"][c] if r["team"]=="RMA"])
+          h=json.loads(get("https://live.euroleague.net/api/Header?gamecode=91&seasoncode=E2026"))
+          print("HEADER", {k:h.get(k) for k in ("Live","TeamA","TeamB","ScoreA","ScoreB","Quarter")})
+          b=json.loads(get("https://live.euroleague.net/api/Boxscore?gamecode=91&seasoncode=E2026"))
+          print("BOX teams", [t["Team"] for t in b["Stats"]], "players", [len(t["PlayersStats"]) for t in b["Stats"]])
+          html=get(f"https://codicilio.github.io/madrid-basket/?x={int(time.time())}")
+          print("HTML has hlUrl", "hlUrl" in html, "channels" in html)
