@@ -205,6 +205,26 @@ def near_kickoff(game, now=None, before_min=20, after_hours=3.5):
     return -before_min * 60 <= delta <= after_hours * 3600
 
 
+def started_recently(game, now=None, days=7):
+    """True desde 20 min antes del inicio hasta 7 días después (para recoger el resultado oficial si DBasket se retrasa)."""
+    if not game.get("kickoffUtc"):
+        return False
+    now = now or datetime.now(timezone.utc)
+    start = datetime.fromisoformat(game["kickoffUtc"].replace("Z", "+00:00"))
+    return -20 * 60 <= (now - start).total_seconds() <= days * 86400
+
+
+def set_official_final(game, home_score, away_score):
+    """Marca el partido como jugado con el resultado oficial (cuando DBasket aún no lo tiene)."""
+    game["played"] = True
+    game["live"] = False
+    game["score"] = f"{home_score} - {away_score}"
+    game["periodLabel"] = None
+    madrid_home = game["home"] == "Real Madrid"
+    won = home_score > away_score if madrid_home else away_score > home_score
+    game["status"] = "Victoria" if won else "Derrota"
+
+
 def quarter_label(quarter, clock=""):
     q = str(quarter or "").strip()
     if not q:
@@ -247,7 +267,7 @@ def enrich_euro(games, now=None):
         if found.get("utcDate"):
             game["kickoffUtc"] = str(found["utcDate"]).replace("+00:00", "Z")
             game["date"], game["time"] = utc_to_madrid(found["utcDate"])
-        if not game["played"] and near_kickoff(game, now):
+        if not game["played"] and started_recently(game, now):
             try:
                 header = get_json(EURO_HEADER.format(code=game["liveGameCode"]))
                 a, b = int(header.get("ScoreA") or 0), int(header.get("ScoreB") or 0)
@@ -256,9 +276,7 @@ def enrich_euro(games, now=None):
                     game["score"] = f"{a} - {b}"
                     game["periodLabel"] = quarter_label(header.get("Quarter"), header.get("RemainingPartialTime")) or "En juego"
                 elif a + b > 0:
-                    game["score"] = f"{a} - {b}"
-                    game["live"] = False
-                    game["periodLabel"] = "Final"
+                    set_official_final(game, a, b)
             except Exception as error:
                 print(f"Aviso: marcador Euroliga no disponible: {error}")
 
@@ -300,9 +318,7 @@ def enrich_acb(games, now=None):
         hs, as_ = found.get("homeScore"), found.get("awayScore")
         if not game["played"] and hs is not None and as_ is not None:
             if status == "FINALIZED":
-                game["score"] = f"{hs} - {as_}"
-                game["periodLabel"] = "Final"
-                game["live"] = False
+                set_official_final(game, int(hs), int(as_))
             elif near_kickoff(game, now) and (int(hs) + int(as_) > 0 or not (status.startswith("NOT_") or status in ("", "SCHEDULED", "PENDING", "POSTPONED", "CANCELLED"))):
                 game["live"] = True
                 game["score"] = f"{hs} - {as_}"
