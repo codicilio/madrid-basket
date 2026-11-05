@@ -15,12 +15,19 @@ ACB_SCHEDULE = "https://acb.com/es/copa-del-rey/noticias/calendario-liga-endesa-
 EURO_SCHEDULE = "https://www.realmadrid.com/es-ES/noticias/baloncesto/primer-equipo/actualidad/el-calendario-del-real-madrid-para-la-euroliga-2026-27-29-07-2026"
 HEADERS = {"User-Agent": "MadridBasketDashboard/1.0 (personal fan dashboard; with DBasket permission)"}
 
-def get(url):
-    req = Request(url, headers=HEADERS)
-    with urlopen(req, timeout=25) as response:
-        if response.status != 200:
-            raise RuntimeError(f"DBasket returned HTTP {response.status}: {url}")
-        return response.read().decode("utf-8", "replace")
+def get(url, attempts=3):
+    """Descarga con reintentos: DBasket a veces tarda o falla un momento."""
+    for attempt in range(1, attempts + 1):
+        try:
+            req = Request(url, headers=HEADERS)
+            with urlopen(req, timeout=25) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"DBasket returned HTTP {response.status}: {url}")
+                return response.read().decode("utf-8", "replace")
+        except Exception:
+            if attempt == attempts:
+                raise
+            time.sleep(10 * attempt)
 
 def get_json(url):
     return json.loads(get(url))
@@ -436,6 +443,38 @@ def should_publish(payload, previous=None):
     print("Se publicará: hay cambios." if changed else "Sin cambios deportivos; se omite la publicación.")
 
 
+def fetch_dbasket(comp, attempts=3):
+    """DBasket a veces devuelve una página incompleta (sin la tabla de partidos).
+    Se reintenta varias veces antes de darlo por fallido."""
+    for attempt in range(1, attempts + 1):
+        try:
+            games = parse_team(comp, get(f"{BASE}/teams/RMA/{SEASON}/{comp}"))
+            table = parse_standings(get(f"{BASE}/seasons/{comp}/{SEASON}"))
+            return games, table
+        except Exception as error:
+            if attempt == attempts:
+                raise
+            print(f"Aviso: DBasket incompleto para {comp} ({error}); reintento {attempt}/{attempts - 1} en {20 * attempt} s.")
+            time.sleep(20 * attempt)
+
+
+def skip_run(error):
+    """Fallo pasajero de DBasket: no se publica nada y la web sigue con los últimos datos válidos.
+    Solo se marca la ejecución como fallida (y GitHub envía el aviso por correo) si los datos
+    publicados ya están desfasados: un partido que empezó hace más de 24 h sigue sin resultado."""
+    previous = previous_payload() or {}
+    now = datetime.now(timezone.utc)
+    stale = [g for g in previous.get("games", []) if not g.get("played") and g.get("kickoffUtc")
+             and (now - datetime.fromisoformat(g["kickoffUtc"].replace("Z", "+00:00"))).total_seconds() > 24 * 3600]
+    output_path = os.environ.get("GITHUB_OUTPUT")
+    if output_path:
+        with open(output_path, "a", encoding="utf-8") as output:
+            output.write("publish=false\n")
+    if stale or not previous:
+        raise RuntimeError(f"DBasket no responde bien y la web tiene datos desfasados: {error}")
+    print(f"::warning::DBasket no disponible ahora mismo ({error}). No se publica; se reintentará en la próxima ejecución.")
+
+
 def main():
     all_games, tables = [], {}
     times = {}
@@ -445,15 +484,16 @@ def main():
         except Exception as error:
             print(f"Aviso: calendario publicado {comp} no disponible ({error}); se usarán los horarios oficiales.")
             times[comp] = {}
-    for comp in COMPS:
-        team_page = get(f"{BASE}/teams/RMA/{SEASON}/{comp}")
-        league_page = get(f"{BASE}/seasons/{comp}/{SEASON}")
-        games = parse_team(comp, team_page)
-        for game in games:
-            game["time"] = times[comp].get(game["date"])
-        tables[comp] = parse_standings(league_page)
-        all_games.extend(games)
-        time.sleep(2)
+    try:
+        for comp in COMPS:
+            games, tables[comp] = fetch_dbasket(comp)
+            for game in games:
+                game["time"] = times[comp].get(game["date"])
+            all_games.extend(games)
+            time.sleep(2)
+    except Exception as error:
+        skip_run(error)
+        return
     enrich_official(all_games)
     previous = previous_payload()
     enrich_channels(all_games, previous)
