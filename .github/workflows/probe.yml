@@ -12,11 +12,8 @@ jobs:
         run: |
           import json, urllib.request, time
           get=lambda u: urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent":"Mozilla/5.0"}), timeout=30).read().decode()
-          import re
-          t=get("https://dbasket.net/teams/RMA/2026-27/euro")
-          m=re.search(r'partido-a-partido.*?</table>', t, re.S)
-          blk=m.group(0) if m else "NO BLOCK"
-          for r in re.findall(r'<tr.*?</tr>', blk, re.S):
-              if '04-11-2026' in r or '30-10-2026' in r: print("ROW", re.sub(r"\s+"," ",r)[:1500])
-          L=get("https://dbasket.net/seasons/euro/2026-27")
-          k=L.find("RMA"); print("STAND", re.sub(r"\s+"," ",L[k-300:k+400]))
+          d=json.loads(get(f"https://codicilio.github.io/madrid-basket/data.json?x={int(time.time())}"))
+          print("UPD", d["updatedAt"])
+          for g in d["games"]:
+              if g["date"] in ("2026-11-04","2026-11-08"): print("GAME", {k:g.get(k) for k in ("date","home","away","played","status","score","channels")})
+          nxt=[g for g in d["games"] if not g["played"]][0]; print("NEXT", nxt["date"], nxt["home"], nxt["away"])
